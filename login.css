@@ -1,0 +1,111 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #EDF0F2;
+}
+
+.login-container {
+    position: absolute;
+    top: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px; /* Minimum height */
+    width: 100%;
+    max-width: 400px; /* Will not exceed 400px */
+    background: #fff;
+    padding: 50px;
+    border-radius: 5px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+
+.login-form {
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+   
+}
+
+.login-form h4 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    padding: 10px;
+    width: 100%;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.input-group-custom input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    background-color: #4a90e2;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #3b78c3;
+}
+
+.signup-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+@media (min-width: 992px) {
+    .login-container {
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .login-illustration {
+        display: block;
+        margin-left: 60px;
+    }
+
+    .login-illustration img {
+        max-width: 400px;
+    }
+}

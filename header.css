@@ -1,0 +1,89 @@
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.menu-toggle-icon { /*menu icon*/
+    font-size: 28px;        /* Increases size */
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .search-section { /*SEARCH icon POSITION*/
+    position: fixed;   /* Fixes the search icon to the right */
+    right: 225px;       /* Distance from the right edge */
+  }
+
+  .bell-section { /*bell icon POSITION*/
+    position: fixed;   /* Fixes the search icon to the right */
+    right: 175px;       /* Distance from the right edge */
+  }
+
+  .user-section { /*bell icon POSITION*/
+    position: fixed;   /* Fixes the search icon to the right */
+    right: 125px;       /* Distance from the right edge */
+  }
+
+  .user-name { /*uname icon POSITION*/
+    position: fixed;   /* Fixes the search icon to the right */
+    right: 70px;       /* Distance from the right edge */
+  }
+
+  .caret-section { /*bell icon POSITION*/
+    position: fixed;   /* Fixes the search icon to the right */
+    right: 45px;       /* Distance from the right edge */
+    cursor: pointer;
+  }
+
+  /* Adjust the icon size and appearance */
+  .header-icon {    /*bell and searrch SIZe*/
+    font-size: 24px;    /* Increase the size of the search icon */
+    cursor: pointer;    /* Makes the icon clickable */
+  }
+
+  .username {   /*usname SIZe*/
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;  /* Adjust the font size if needed */
+    font-weight: 600; /* Adjust the weight if needed */
+  }
+
+  /*hidden log in starts from here*/
+  .login-box {
+    display: none;
+    position: absolute;
+    top: 70px; /* Adjust this value to position it below the icon */
+    right: 20px; /* Move it 20px to the left */
+    width: 150px; /* Width of the login box */
+    padding: 10px;
+    background-color: #ffffff; /* Background color for the box */
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  
+  .login-btn {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .login-btn:hover {
+    background-color: #0056b3;
+  }
+
+  /*to here*/
