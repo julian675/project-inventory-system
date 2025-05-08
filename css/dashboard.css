@@ -1,0 +1,299 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #edf0f2;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden; /* Prevent scrolling */
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 100vh;
+    background-color: #5C88B2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 70px; /* Pushes content lower */
+    font-family: 'Poppins', sans-serif;
+    
+  }
+  
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .instock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative; /* Set to relative to control position */
+    top: 20px; /* Move it down by 30px */
+  }
+  
+  .products {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative; /* Set to relative to control position */
+    top: 30px; /* Move it down by 30px */
+  }
+
+  .sales {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative; /* Set to relative to control position */
+    top: 40px; /* Move it down by 30px */
+  }
+
+  .orders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative; /* Set to relative to control position */
+    top: 50px; /* Move it down by 30px */
+  }
+
+  .users {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative; /* Set to relative to control position */
+    top: 60px; /* Move it down by 30px */
+  }
+
+  .invoice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative; /* Set to relative to control position */
+    top: 70px; /* Move it down by 30px */
+  }
+  
+    
+  .sidebar-icon {
+    font-size: 20px;
+  }
+  
+  .menu-label {
+    font-size: 11px;
+    margin-top: 5px;
+    text-align: center;
+  }
+  
+  .vertical-line {
+    width: 4px;                  /* ← Thickness of the line */
+    height: 50px;               /* ← Height of the line */
+    background-color: white;     /* Color of the line */
+    border-radius: 8px;          /* ← Round corners */
+    position: fixed;             /* ← Fixed position on the screen */
+    top: 70px;                   /* Distance from top */
+    left: 0;                     /* Stick to the left edge */
+    z-index: 999;                /* Make sure it stays on top */
+
+  }
+
+  .card {
+    width: 290px;            /* Adjusted width */
+    height: auto;            /* Adjust or set fixed height if needed */
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: sans-serif;
+    z-index: 999;            /* Ensures it appears on top */
+
+  }
+  
+  .card-revenue {
+    position: fixed;         /* Fixes the card's position on screen */
+    top: 70px;              /* Distance from the top of the screen */
+    left: 100px;             /* Distance from the left of the screen */
+  }
+
+  .card-srevenue {
+    position: fixed;
+    top: 70px;
+    left: 430px;
+  }
+
+  .card-profit {
+    position: fixed;
+    top: 70px;
+    left: 760px;
+  }
+
+  .card-income {
+    position: fixed;
+    top: 70px;
+    left: 1090px;
+  }
+
+  .card-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    transform: translateX(130px); /* Shift 10px left */
+  }
+  
+  .icon {
+    font-size: 24px;
+  }
+  
+  .plus {
+    color: green;
+  }
+  
+  .amount {
+    color: black;
+  }
+  
+  
+  .bar {
+    width: 965px;            /* Adjusted width */
+    height: auto;            /* Adjust or set fixed height if needed */
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: sans-serif;
+    z-index: 999;            /* Ensures it appears on top */
+    position: fixed;         /* Fixes the card's position on screen */
+    top: 160px;              /* Distance from the top of the screen */
+    left: 100px;             /* Distance from the left of the screen */
+  }
+
+  .pie {
+    width: 270px;            /* Adjusted width */
+    height: auto;            /* Adjust or set fixed height if needed */
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: sans-serif;
+    z-index: 999;            /* Ensures it appears on top */
+    position: fixed;         /* Fixes the card's position on screen */
+    top: 160px;              /* Distance from the top of the screen */
+    left: 1110px;             /* Distance from the left of the screen */
+  }
+
+  .stock-alert-container {
+    width: 800px;
+    font-family: Arial, sans-serif;       /* Adjusted width */
+    height: 240px;            /* Adjust or set fixed height if needed */
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: sans-serif;
+    z-index: 999;            /* Ensures it appears on top */
+    position: fixed;         /* Fixes the card's position on screen */
+    top: 445px;              /* Distance from the top of the screen */
+    left: 100px;    
+  }
+  
+  .stock-alert-container h3 {
+    margin-bottom: 0;
+  }
+  
+  .stock-alert-container hr {
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .stock-alert-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  
+  .stock-alert-table th {
+    font-weight: bold;
+  }
+  
+  .stock-alert-table td {
+    color: gray;
+  }
+  
+  .stock-alert-table td,
+.stock-alert-table th {
+  padding: 13px 20px; /* Adjust horizontal spacing (left/right) */
+}
+
+.ts-product-container {
+  width: 440px;
+  font-family: Arial, sans-serif;       /* Adjusted width */
+  height: 240px;            /* Adjust or set fixed height if needed */
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: sans-serif;
+  z-index: 999;            /* Ensures it appears on top */
+  position: fixed;         /* Fixes the card's position on screen */
+  top: 445px;              /* Distance from the top of the screen */
+  left: 940px;    
+}
+
+.ts-product-table h3 {
+  margin-bottom: 0;
+}
+
+.ts-product-table hr {
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.ts-product-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ts-product-table th {
+  font-weight: bold;
+}
+
+.ts-product-table td {
+  color: gray;
+}
+
+.ts-product-table td,
+.ts-product-table th {
+  padding: 13px 20px; /* Adjust horizontal spacing (left/right) */
+}

@@ -1,44 +1,52 @@
-    <?php
-    session_start();
+<?php
+session_start();
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "ims_db";
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "ims_db";
 
-    $conn = new mysqli($servername, $username, $password, $database);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+$conn = new mysqli($servername, $username, $password, $database);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-    $error = "";
+$error = "";
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $uname = $_POST['uname'];
-        $password = $_POST['password'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $uname = $_POST['uname'];
+    $password = $_POST['password'];
 
-        $stmt = $conn->prepare("SELECT * FROM users WHERE uname = ?");
-        $stmt->bind_param("s", $uname);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    $stmt = $conn->prepare("SELECT * FROM users WHERE uname = ?");
+    $stmt->bind_param("s", $uname);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
 
-            if (password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['uname'];
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['uname'];
+            $_SESSION['role'] = $user['role'];
 
-                header("Location: index.php");
-                exit;
+            if ($user['role'] === 'admin') {
+                header("Location: dashboard.php");
+            } elseif ($user['role'] === 'viewer') {
+                header("Location: g-dashboard.php");
             } else {
-                $error = "❌ Incorrect password.";
+                $error = "❌ Unknown user role.";
             }
+            exit;
         } else {
-            $error = "❌ Username not found.";
+            $error = "❌ Incorrect password.";
         }
+    } else {
+        $error = "❌ Username not found.";
     }
-    ?>
+}
+?>
+
 
     <!DOCTYPE html>
     <html lang="en">
