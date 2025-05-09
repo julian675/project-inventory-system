@@ -126,20 +126,72 @@ body {
 
   }
 
-  .card {
-    width: 290px;            /* Adjusted width */
-    height: auto;            /* Adjust or set fixed height if needed */
+  .container {
+    width: 1307px;
+    height: 30px;
     background: white;
     padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
     font-family: sans-serif;
-    z-index: 999;            /* Ensures it appears on top */
+    z-index: 999;
+    position: fixed;
+    top: 70px;
+    left: 90px;
+  }
 
+  h2{
+    position: fixed;
+    top: 65px;
+    left: 100px;
+  }
+
+  .page {
+    width: 1307px;
+    height: 550px;
+    background: white;
+    padding: 16px;
+    border-radius: 5px;
+    font-family: sans-serif;
+    z-index: 999;
+    position: fixed;
+    top: 140px;
+    left: 90px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
   }
   
-  .card-revenue {
-    position: fixed;         /* Fixes the card's position on screen */
-    top: 70px;              /* Distance from the top of the screen */
-    left: 100px;             /* Distance from the left of the screen */
+  .client-list {
+    width: 200px;
+    border-right: 1px solid #ccc;
+    padding-right: 10px;
+    overflow-y: auto;
   }
+  
+  .client-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 6px;
+    background: #f0f0f0;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  
+  .client-button.active {
+    background: #2a5298;
+    color: white;
+  }
+  
+  .details-section {
+    flex: 1;
+    padding-left: 20px;
+    display: none; /* hidden by default */
+  }
+  
+  .details-section.active {
+    display: block;
+  }
+  

@@ -12,7 +12,7 @@
 
 </head>
 <body>  
-    <nav>
+<nav>
         <div class="menu-toggle-icon">&#9776;</div>
         <div class="search-section">
             <i class="fas fa-search header-icon black-icon"></i>
@@ -24,14 +24,24 @@
             <i class="fas fa-circle-user header-icon user-icon"></i>
         </div>
         <div class="user-name">
-            <span class="username">Guest</span>
+          <span class="username">
+                <?php 
+                session_start(); 
+                echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest'; 
+                ?>
+            </span>
         </div>
+
         <div class="caret-section">
             <i class="fas fa-caret-down header-icon black-icon"></i>
         </div>
-        <div id="login-box" class="login-box" style="display: none;">
-            <a href="login.php" id="login-btn" class="login-btn">Login</a>
-        </div>
+        <div id="login-box" class="login-box">
+          <?php if (isset($_SESSION['username'])): ?>
+              <a href="logout.php" id="logout-btn" class="login-btn">Logout</a>
+          <?php else: ?>
+              <a href="login.php" id="login-btn" class="login-btn">Login</a>
+          <?php endif; ?>
+      </div>
     </nav>
     <div class="sidebar">
         <div class="vertical-line"></div>
