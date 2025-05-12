@@ -1,7 +1,16 @@
-const caretIcon = document.querySelector('.caret-section i');
-const loginBox = document.getElementById('login-box');
 
-// Toggle the visibility of the login box when the caret icon is clicked
-caretIcon.addEventListener('click', () => {
-  loginBox.style.display = loginBox.style.display === 'none' ? 'block' : 'none';
-});
+  function toggleLogin() {
+    const dropdown = document.getElementById('login-dropdown');
+    const isVisible = dropdown.style.display === 'block';
+    dropdown.style.display = isVisible ? 'none' : 'block';
+  }
+
+  // Hide dropdown if clicked outside
+  document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('login-dropdown');
+    const caret = document.querySelector('.fa-caret-down');
+    if (!dropdown.contains(event.target) && !caret.contains(event.target)) {
+      dropdown.style.display = 'none';
+    }
+  });
+

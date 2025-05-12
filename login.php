@@ -11,93 +11,142 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$error = "";
+$message = '';
+$alertType = 'success'; // Default alert type
+
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    $alertType = $_SESSION['alert_type'] ?? 'success';
+    unset($_SESSION['message'], $_SESSION['alert_type']);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $uname = $_POST['uname'];
+    $uname = trim($_POST['uname']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE uname = ?");
-    $stmt->bind_param("s", $uname);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // ✅ Updated to include role
+    $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE uname = ?");
+    if ($stmt) {
+        $stmt->bind_param("s", $uname);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
+        if ($result && $result->num_rows === 1) {
+            $user = $result->fetch_assoc();
 
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['uname'];
-            $_SESSION['role'] = $user['role'];
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $uname;
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['message'] = "✅ Login successful!";
+                $_SESSION['alert_type'] = 'success';
 
-            if ($user['role'] === 'admin') {
-                header("Location: dashboard.php");
-            } elseif ($user['role'] === 'viewer') {
-                header("Location: g-dashboard.php");
+                // ✅ Redirect based on role
+                if ($user['role'] === 'admin') {
+                    header("Location: admin/index.php");
+                } elseif ($user['role'] === 'viewer') {
+                    header("Location: viewer/index.php");
+                } else {
+                    header("Location: index.php"); // Fallback
+                }
+                exit;
             } else {
-                $error = "❌ Unknown user role.";
+                $_SESSION['message'] = "❌ Incorrect password!";
+                $_SESSION['alert_type'] = 'danger';
             }
-            exit;
         } else {
-            $error = "❌ Incorrect password.";
+            $_SESSION['message'] = "❌ Username not found!";
+            $_SESSION['alert_type'] = 'danger';
         }
+
+        $stmt->close();
     } else {
-        $error = "❌ Username not found.";
+        $_SESSION['message'] = "❌ Failed to prepare statement: " . $conn->error;
+        $_SESSION['alert_type'] = 'danger';
     }
+
+    // Reload login page on error
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
 }
 ?>
 
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Login</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="login.css" rel="stylesheet">
+        <link href="css/login.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     </head>
     <body>
+      <?php if ($message): ?>
+    <div id="alert-message" 
+        class="alert alert-<?= htmlspecialchars($alertType) ?> text-center position-fixed top-0 start-50 translate-middle-x mt-3 shadow"
+        style="z-index: 9999; width: max-content; max-width: 90%;">
+        <?= htmlspecialchars($message) ?>
+    </div>
 
-    <div class="login-container">
-    <div class="login-form">
-        <h4>Login</h4>
-        <p class="subtitle">See your growth and get support!</p>
+    <script>
+        // Auto-hide after 2 seconds (2000 ms)
+        setTimeout(function () {
+            var alertBox = document.getElementById('alert-message');
+            if (alertBox) {
+                alertBox.style.display = 'none';
+            }
+        }, 2000);
 
-        <button class="google-btn">
-            <img src="https://img.icons8.com/color/16/000000/google-logo.png"/>
-            Sign in with Google
-        </button>
+        // Optional: Dismiss on click
+        document.addEventListener('click', function () {
+            var alertBox = document.getElementById('alert-message');
+            if (alertBox) {
+                alertBox.style.display = 'none';
+            }
+        });
+    </script>
+<?php endif; ?>
 
-        <?php if (!empty($error)): ?>
-            <div class="alert alert-danger text-center mt-2"><?= $error ?></div>
-        <?php endif; ?>
 
-        <form method="POST">
-            <div class="input-group-custom">
-                <input type="text" name="uname" placeholder="Enter your username" required>
+    <div class="container">
+    <div class="content-wrapper">
+        <div class="left-content">
+            <div class="header-text">
+                <h4>Login</h4>
+                <p class="subtitle">See your growth and get support!</p>
             </div>
+            <div class="form-section">
+                <button class="google-btn">
+                <img src="https://img.icons8.com/color/16/000000/google-logo.png"/>
+                Sign in with Google
+                </button>
+                <form method="POST">
+                    <div class="input-group-custom">
+                        <input type="text" name="uname" placeholder="Enter your username" required>
+                    </div>
 
-            <div class="input-group-custom">
-                <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
+                    <div class="input-group-custom">
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                    </div>
 
-            <div class="options">
-                <label><input type="checkbox" name="remember"> Remember me</label>
-                <a href="#">Forgot password?</a>
-            </div>
+                    <div class="options">
+                        <label><input type="checkbox" name="remember"> Remember me</label>
+                        <a href="forgot_password.php">Forgot password?</a>
+                    </div>
 
-            <button type="submit" class="login-btn">Login</button>
-        </form>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
 
         <p class="signup-text">Not registered yet? <a href="register.php">Create a new account</a></p>
+            </div>
+        
+        </div>
+        <div class="right-content">
+            <img src="img/login-illu.jpg" alt="Example Image" />
+        </div>
     </div>
-
-    <div class="login-illustration">
-        <img src="img/bg.jpg" alt="Illustration"> 
     </div>
-</div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>

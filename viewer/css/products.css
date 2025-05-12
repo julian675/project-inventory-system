@@ -1,0 +1,94 @@
+body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+    }
+    .sidebar {
+position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 80px;               /* Keeping your original width */
+  background-color: #5C88B2; /* Keeping your original color */
+  font-size: 11px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;      
+  padding-top: 75px;
+    }
+ .main {
+  margin-left: 80px;
+  margin-top: 30px; /* So content doesn't go under header */
+  padding: 20px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.menu-item:hover {
+  background-color: #4a6e91; /* Slightly darker shade on hover */
+}
+
+.sidebar-icon {
+  font-size: 20px;
+}
+
+.menu-label {
+  font-size: 11px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.blank-container {
+  display: flex;
+  margin: 20px 0;
+}
+
+.container {
+  background: #fff;
+  padding: 0;
+  border-radius: 12px;
+  flex: 1;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  font-size: 14px;
+  height: 125px;
+  display: flex;
+  overflow: hidden; /* Ensures background image doesn't overflow rounded corners */
+}
+
+.left-side {
+  flex: 0 0 300px; /* Increase this number to make it wider */
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 12px 0 0 12px;
+}
+
+.middle {
+  flex: 2;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.right-side {
+  flex: 1;
+  text-align: right;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

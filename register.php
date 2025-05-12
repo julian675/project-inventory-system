@@ -12,10 +12,12 @@ if ($conn->connect_error) {
 }
 
 $message = '';
+$alertType = 'success'; // Default to success
 
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
-    unset($_SESSION['message']); 
+    $alertType = $_SESSION['alert_type'] ?? 'success';
+    unset($_SESSION['message'], $_SESSION['alert_type']);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -27,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $_SESSION['message'] = "❌ Invalid email format!";
+        $_SESSION['alert_type'] = 'danger';
     } else {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -37,17 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if ($stmt->execute()) {
                 $_SESSION['message'] = "✅ New record created successfully!";
+                $_SESSION['alert_type'] = 'success';
             } else {
                 if (str_contains($stmt->error, 'Duplicate entry')) {
                     $_SESSION['message'] = "❌ Username or email already exists!";
                 } else {
                     $_SESSION['message'] = "❌ Error: " . $stmt->error;
                 }
+                $_SESSION['alert_type'] = 'danger';
             }
 
             $stmt->close();
         } else {
             $_SESSION['message'] = "❌ Failed to prepare statement: " . $conn->error;
+            $_SESSION['alert_type'] = 'danger';
         }
     }
 
@@ -59,68 +65,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="register.css" rel="stylesheet">
-</head>
-<body>
-
-<div class="container">
-    <div class="image-section">
-        <img src="img/reg-illu.png" class="img-fluid" alt="Registration Illustration">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/register.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    </head>
+    <body>
+<?php if ($message): ?>
+    <div id="alert-message" 
+        class="alert alert-<?= htmlspecialchars($alertType) ?> text-center position-absolute top-0 start-50 translate-middle-x mt-3" 
+        style="z-index: 1000;">
+        <?= htmlspecialchars($message) ?>
     </div>
-    
-  <div class="form-wrapper">
-        <h2 class="custom-heading register-title mb-4">Register</h2>
 
-        <?php if ($message): ?>
-            <div class="alert alert-info text-center"><?= $message ?></div>
-        <?php endif; ?>
+    <script>
+        // Auto-dismiss after 2 seconds
+        setTimeout(function () {
+            var alertBox = document.getElementById('alert-message');
+            if (alertBox) {
+                alertBox.style.display = 'none';
+            }
+        }, 2000);
 
-        <form method="POST">
-            <div class="mb-3">
-                <label class="form-label">Firstname:</label>
-                <input type="text" name="fname" class="form-control" required>
+        // Optional: Dismiss on click
+        document.addEventListener('click', function () {
+            var alertBox = document.getElementById('alert-message');
+            if (alertBox) {
+                alertBox.style.display = 'none';
+            }
+        });
+    </script>
+<?php endif; ?>
+
+    <div class="container">
+        <div class="content-wrapper">
+            
+            <div class="left-content">
+                <img src="img/reg-illu.png" />
             </div>
+            <div class="right-content">
+                <div class="header-text">
+                    <h4>Register</h4>
+                </div>
+                <div class="form-section">
+                    <form method="POST">
+            <form method="POST" action="register.php">
+                <div class="input-group-custom">
+                    <label class="form-label">Firstname:</label>
+                    <input type="text" name="fname" placeholder="Enter your firstname" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Lastname:</label>
-                <input type="text" name="lname" class="form-control" required>
-            </div>
+                <div class="input-group-custom">
+                    <label class="form-label">Lastname:</label>
+                    <input type="text" name="lname" placeholder="Enter your lastname" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Username:</label>
-                <input type="text" name="uname" class="form-control" required>
-            </div>
+                <div class="input-group-custom">
+                    <label class="form-label">Username:</label>
+                    <input type="text" name="uname" placeholder="Enter your username" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Email:</label>
-                <input type="email" name="email" class="form-control" required>
-            </div>
+                <div class="input-group-custom">
+                    <label class="form-label">Email:</label>
+                    <input type="text" name="email" placeholder="Enter your email" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Password:</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
+                <div class="input-group-custom">
+                    <label class="form-label">Password:</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
 
-            <div class="mb-3 text-center">
-                <a href="login.php">Already Registered? Click here</a>
+                <div class="form-footer">
+                    <button type="submit" class="login-btn">Submit</button>
+                    <p class="signup-text">Already registered? <a href="login.php">Click here!</a></p>
+                </div>
+                </form>
+                </div>
             </div>
-
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
 
-
-
-
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
