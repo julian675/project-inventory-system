@@ -49,11 +49,11 @@ if (isset($_SESSION['username'])) {
 
 
   <div class="sidebar">
-        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/viewer/index.php'">
+        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/manager/index.php'">
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
-        <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/viewer/instock.php'">
+        <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/manager/instock.php'">
             <i class="fas fa-boxes sidebar-icon"></i>
             <div class="menu-label">In Stock</div> 
         </div>
@@ -61,15 +61,15 @@ if (isset($_SESSION['username'])) {
             <i class="fas fa-tags sidebar-icon"></i>
             <div class="menu-label">Products</div> 
         </div>
-        <div class="menu-item sales" onclick="window.location.href='/project-inventory-system/viewer/sales.php'">
+        <div class="menu-item sales" onclick="window.location.href='/project-inventory-system/manager/sales.php'">
             <i class="fas fa-cash-register sidebar-icon"></i>
             <div class="menu-label">Sales</div>
           </div>
-          <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/viewer/orders.php'">
+          <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/manager/orders.php'">
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>
           </div>
-          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/viewer/invoice.php'">
+          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/manager/invoice.php'">
             <i class="fas fa-file-invoice sidebar-icon"></i>
             <div class="menu-label">Invoice</div>
           </div>

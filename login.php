@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // ✅ Redirect based on role
                 if ($user['role'] === 'admin') {
                     header("Location: admin/index.php");
-                } elseif ($user['role'] === 'viewer') {
-                    header("Location: viewer/index.php");
+                } elseif ($user['role'] === 'manager') {
+                    header("Location: manager/index.php");
                 } else {
                     header("Location: index.php"); // Fallback
                 }

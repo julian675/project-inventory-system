@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("INSERT INTO users (fname, lname, uname, email, password, role) VALUES (?, ?, ?, ?, ?, 'viewer')");
+        $stmt = $conn->prepare("INSERT INTO users (fname, lname, uname, email, password, role) VALUES (?, ?, ?, ?, ?, 'manager')");
 
         if ($stmt) {
             $stmt->bind_param("sssss", $fname, $lname, $uname, $email, $hashedPassword);

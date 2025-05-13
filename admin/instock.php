@@ -8,14 +8,25 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 // Set username for display
-$username = 'Guest';
-if (isset($_SESSION['username'])) {
-    $username = htmlspecialchars($_SESSION['username']);
+$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
 
+// Database connection
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "ims_db";
 
-    
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
+
+// Run the query to fetch inventory data
+$sql = "SELECT id, product, items, status FROM instock";
+$result = $conn->query($sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +37,7 @@ if (isset($_SESSION['username'])) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="css/instock.css" rel="stylesheet">
   <link href="/project-inventory-system/css/header.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
 </head>
 <body>
 
@@ -92,58 +104,84 @@ if (isset($_SESSION['username'])) {
      <div class="blank-container">
       <div class="container">
         <h1>In Stock</h1>
-
-          <form method="POST" action="/new_exp/admin/transfer.php" class="stock-transfer-form" style="margin-top: 20px;">
-            <label for="stock_id">Product ID:</label><br>
-            <input type="number" id="stock_id" name="stock_id" required style="padding: 8px; width: 100%; margin-bottom: 10px;"><br>
-
-            <label for="transfer_qty">Quantity to Transfer:</label><br>
-            <input type="number" id="transfer_qty" name="transfer_qty" required style="padding: 8px; width: 100%; margin-bottom: 10px;"><br>
-
-            <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
-              Transfer Stock
-            </button>
+                    <!-- Add/Delete Controls -->
+          <form id="addProductForm" style="margin-bottom: 10px; display: flex; gap: 10px;">
+              <input type="text" name="product" placeholder="Product name" required>
+              <input type="number" name="items" placeholder="Quantity" min="1" required>
+              <button type="submit">Add</button>
+              <button type="button" id="deleteSelected">Delete Selected</button>
           </form>
-          <table border="1" cellspacing="0" cellpadding="10" style="width:100%; text-align:center;">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Product</th>
-      <th>Category</th>
-      <th>Sales Channel</th>
-      <th>Instruction</th>
-      <th>Quantity In</th>
-      <th>Remaining</th>
-      <th>Entry Date</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Inverter</td>
-      <td>cat1</td>
-      <td>Store name</td>
-      <td>Initial stock</td>
-      <td>50</td>
-      <td>0</td>
-      <td>2024-12-01 10:00:00</td>
-      <td>Pending</td>
-      <td>
-        <button>➕</button>
-        <button>➖</button>
-      </td>
-    </tr>
-    <!-- Repeat for all 10 rows with appropriate data -->
-  </tbody>
-</table>
+
+
+          <!-- In Stock Table -->
+          <table border="1" cellpadding="6">
+              <thead>
+                  <tr>
+                      <th><input type="checkbox" id="selectAll"></th>
+                      <th>Product</th>
+                      <th>Items</th>
+                      <th>Status</th>
+                      <th>Change</th>
+                  </tr>
+              </thead>
+              <tbody id="itemsTable">
+                  <?php include 'instock_backend.php'; ?>
+              </tbody>
+          </table>
 
       </div>
     </div>
   </div>
    
+          <script>
+            function loadItems() {
+                $.get("instock_backend.php", function(response) {
+                    $("#itemsTable").html(response);
+                });
+            }
 
-  <script src="/project-inventory-system/js/header.js"></script>
-</body>
+            $("#addProductForm").submit(function(e) {
+                e.preventDefault();
+                $.post("instock_backend.php", $(this).serialize() + '&add=true', function() {
+                    location.reload(); // Reloads the entire page
+                });
+            });
+
+            $(document).on('click', '.plus-btn', function() {
+                const id = $(this).data('id');
+                $.post("instock_backend.php", { update_quantity: true, id: id, delta: 1 }, function() {
+                    loadItems();
+                });
+            });
+
+            $(document).on('click', '.minus-btn', function() {
+                const id = $(this).data('id');
+                $.post("instock_backend.php", { update_quantity: true, id: id, delta: -1 }, function() {
+                    loadItems();
+                });
+            });
+
+            $("#selectAll").on("change", function() {
+                $(".row-checkbox").prop("checked", this.checked);
+            });
+
+            $("#deleteSelected").click(function() {
+                const ids = $(".row-checkbox:checked").map(function() {
+                    return this.value;
+                }).get();
+
+                if (ids.length === 0) {
+                    alert("Select at least one item.");
+                    return;
+                }
+
+                $.post("instock_backend.php", { delete_ids: ids }, function() {
+                    loadItems();
+                });
+            });
+
+            $(document).ready(loadItems);
+            </script>
+    <script src="/project-inventory-system/js/header.js"></script>
+  </body>
 </html>
