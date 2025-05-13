@@ -2,6 +2,6 @@
 session_start();
 session_unset();
 session_destroy();
-header("Location: /new_exp/index.php");
+header("Location: /project-inventory-system/index.php");
 exit();
 ?>

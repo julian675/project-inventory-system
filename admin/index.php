@@ -23,7 +23,7 @@ if (isset($_SESSION['username'])) {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="css/index.css" rel="stylesheet">
-  <link href="/new_exp/css/header.css" rel="stylesheet">
+  <link href="/project-inventory-system/css/header.css" rel="stylesheet">
 </head>
 <body>
 
@@ -44,9 +44,9 @@ if (isset($_SESSION['username'])) {
 
     <div id="login-dropdown" class="dropdown-box" style="display: none;">
         <?php if (isset($_SESSION['username'])): ?>
-            <a href="/new_exp/logout.php" class="login-button">Log Out</a>
+            <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
         <?php else: ?>
-            <a href="/new_exp/login.php" class="login-button">Log In</a>
+            <a href="/project-inventory-system/login.php" class="login-button">Log In</a>
         <?php endif; ?>
     </div>
 
@@ -129,6 +129,6 @@ if (isset($_SESSION['username'])) {
 
   </div>
 
-  <script src="/new_exp/js/header.js"></script>
+  <script src="/project-inventory-system/js/header.js"></script>
 </body>
 </html>

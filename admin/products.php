@@ -46,9 +46,9 @@ if (isset($_SESSION['username'])) {
 
     <div id="login-dropdown" class="dropdown-box" style="display: none;">
         <?php if (isset($_SESSION['username'])): ?>
-            <a href="/new_exp/logout.php" class="login-button">Log Out</a>
+            <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
         <?php else: ?>
-            <a href="/new_exp/login.php" class="login-button">Log In</a>
+            <a href="/project-inventory-system/login.php" class="login-button">Log In</a>
         <?php endif; ?>
     </div>
 
@@ -56,11 +56,11 @@ if (isset($_SESSION['username'])) {
 
 
   <div class="sidebar">
-        <div class="menu-item dashboard" onclick="window.location.href='/new_exp/admin/index.php'">
+        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/index.php'">
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
-        <div class="menu-item instock" onclick="window.location.href='/new_exp/admin/instock.php'">
+        <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/admin/instock.php'">
             <i class="fas fa-boxes sidebar-icon"></i>
             <div class="menu-label">In Stock</div> 
         </div>
@@ -68,19 +68,19 @@ if (isset($_SESSION['username'])) {
             <i class="fas fa-tags sidebar-icon"></i>
             <div class="menu-label">Products</div> 
         </div>
-        <div class="menu-item sales" onclick="window.location.href='/new_exp/admin/sales.php'">
+        <div class="menu-item sales" onclick="window.location.href='/project-inventory-system/admin/sales.php'">
             <i class="fas fa-cash-register sidebar-icon"></i>
             <div class="menu-label">Sales</div>
           </div>
-          <div class="menu-item orders" onclick="window.location.href='/new_exp/admin/orders.php'">
+          <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>
           </div>
-          <div class="menu-item users" onclick="window.location.href='/new_exp/admin/users.php'">
+          <div class="menu-item users" onclick="window.location.href='/project-inventory-system/admin/users.php'">
             <i class="fas fa-users sidebar-icon"></i>
             <div class="menu-label">Users</div>
           </div>
-          <div class="menu-item invoice" onclick="window.location.href='/new_exp/admin/invoice.php'">
+          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
             <i class="fas fa-file-invoice sidebar-icon"></i>
             <div class="menu-label">Invoice</div>
           </div>
@@ -221,6 +221,6 @@ if (isset($_SESSION['username'])) {
     </div>
   </div>
 
-  <script src="/new_exp/js/header.js"></script>
+  <script src="/project-inventory-system/js/header.js"></script>
 </body>
 </html>
