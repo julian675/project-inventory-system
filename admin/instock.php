@@ -104,7 +104,18 @@ $result = $conn->query($sql);
      <div class="blank-container">
       <div class="container">
         <h1>In Stock</h1>
-                    <!-- Add/Delete Controls -->
+
+            <!-- Search Bar -->
+            <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 10px;">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search products..."
+                    style="flex: 1; padding: 5px 10px; font-size: 16px;"
+                >
+                <i class="fas fa-search" style="font-size: 20px; color: #333;"></i>
+            </div>
+                        
           <form id="addProductForm" style="margin-bottom: 10px; display: flex; gap: 10px;">
               <input type="text" name="product" placeholder="Product name" required>
               <input type="number" name="items" placeholder="Quantity" min="1" required>
@@ -133,55 +144,7 @@ $result = $conn->query($sql);
     </div>
   </div>
    
-          <script>
-            function loadItems() {
-                $.get("instock_backend.php", function(response) {
-                    $("#itemsTable").html(response);
-                });
-            }
-
-            $("#addProductForm").submit(function(e) {
-                e.preventDefault();
-                $.post("instock_backend.php", $(this).serialize() + '&add=true', function() {
-                    location.reload(); // Reloads the entire page
-                });
-            });
-
-            $(document).on('click', '.plus-btn', function() {
-                const id = $(this).data('id');
-                $.post("instock_backend.php", { update_quantity: true, id: id, delta: 1 }, function() {
-                    loadItems();
-                });
-            });
-
-            $(document).on('click', '.minus-btn', function() {
-                const id = $(this).data('id');
-                $.post("instock_backend.php", { update_quantity: true, id: id, delta: -1 }, function() {
-                    loadItems();
-                });
-            });
-
-            $("#selectAll").on("change", function() {
-                $(".row-checkbox").prop("checked", this.checked);
-            });
-
-            $("#deleteSelected").click(function() {
-                const ids = $(".row-checkbox:checked").map(function() {
-                    return this.value;
-                }).get();
-
-                if (ids.length === 0) {
-                    alert("Select at least one item.");
-                    return;
-                }
-
-                $.post("instock_backend.php", { delete_ids: ids }, function() {
-                    loadItems();
-                });
-            });
-
-            $(document).ready(loadItems);
-            </script>
+    <script src="js/instock.js"></script>
     <script src="/project-inventory-system/js/header.js"></script>
   </body>
 </html>

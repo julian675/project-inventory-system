@@ -1,6 +1,6 @@
 body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', sans-serif;
       background-color: #f0f2f5;
     }
     .sidebar {
@@ -61,8 +61,13 @@ position: fixed;
   flex: 1;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   font-size: 14px;
-  height: 700px;
+  /* Remove fixed height to allow dynamic resizing */
+  height: auto;
+  max-height: 80vh; /* or any suitable max height */
+  overflow-y: auto;
+
 }
+
 
 .instock-table {
   width: 100%;
@@ -88,8 +93,8 @@ position: fixed;
 }
 
 .status-warning {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: #e4b314;
+  color: #e6b830;
 }
 
 .status-critical {
@@ -106,6 +111,7 @@ position: fixed;
         cursor: pointer;
         border-radius: 4px;
         transition: background-color 0.3s ease;
+        margin-top: 50px; 
     }
 
     /* Hover effect */
@@ -120,7 +126,10 @@ position: fixed;
         font-size: 14px;
         border-radius: 4px;
         border: 1px solid #ccc;
+        margin-top: 50px; 
     }
+
+    
 table {
     width: 100%;
     border-collapse: collapse;
