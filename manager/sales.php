@@ -1,9 +1,14 @@
 <?php
 session_start();
 
-// Default to Guest
-$username = 'Guest';
+// Block access if not logged in or not admin
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'manager') {
+    header("Location: manager/login.php");
+    exit;
+}
 
+// Set username for display
+$username = 'Guest';
 if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }

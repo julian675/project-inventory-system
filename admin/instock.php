@@ -106,14 +106,12 @@ $result = $conn->query($sql);
         <h1>In Stock</h1>
 
             <!-- Search Bar -->
-            <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 10px;">
-                <input
+            <div class="search">
+                <input class="search-section"
                     type="text"
                     id="searchInput"
-                    placeholder="Search products..."
-                    style="flex: 1; padding: 5px 10px; font-size: 16px;"
-                >
-                <i class="fas fa-search" style="font-size: 20px; color: #333;"></i>
+                    placeholder="Search products...">
+                <i class="fas fa-search"></i>
             </div>
                         
           <form id="addProductForm" style="margin-bottom: 10px; display: flex; gap: 10px;">

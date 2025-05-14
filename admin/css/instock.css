@@ -63,7 +63,7 @@ position: fixed;
   font-size: 14px;
   /* Remove fixed height to allow dynamic resizing */
   height: auto;
-  max-height: 80vh; /* or any suitable max height */
+  max-height: 100vh; /* or any suitable max height */
   overflow-y: auto;
 
 }
@@ -111,7 +111,7 @@ position: fixed;
         cursor: pointer;
         border-radius: 4px;
         transition: background-color 0.3s ease;
-        margin-top: 50px; 
+        margin-top: 20px; 
     }
 
     /* Hover effect */
@@ -126,7 +126,7 @@ position: fixed;
         font-size: 14px;
         border-radius: 4px;
         border: 1px solid #ccc;
-        margin-top: 50px; 
+        margin-top: 20px; 
     }
 
     
@@ -186,3 +186,20 @@ input[type="checkbox"] {
     background-color: #cc3328;
 }
 
+.search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 100px; /* Added */
+}
+
+.search-section {
+  width: 200px; /* Set to whatever width you want */
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+.fa-search {
+  font-size: 20px;
+  color: #615e5e;
+}

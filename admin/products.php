@@ -12,6 +12,32 @@ $username = 'Guest';
 if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
+
+// Database connection
+$servername = "localhost";
+$username_db = "root";
+$password_db = "";
+$dbname = "ims_db"; // Your database name
+
+$conn = new mysqli($servername, $username_db, $password_db, $dbname);
+
+// Check the connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check product availability (for example, Product 1)
+$product_id = 1; // You can change this dynamically depending on the product you're checking
+$sql = "SELECT * FROM `in_stock` WHERE `product_id` = $product_id AND `quantity` > 0"; 
+$result = $conn->query($sql);
+
+// Check if the product is in stock
+$product_in_stock = false;
+if ($result->num_rows > 0) {
+    $product_in_stock = true;
+}
+
+$conn->close();
 ?>
 
 
@@ -90,136 +116,23 @@ if (isset($_SESSION['username'])) {
 
   <div class="main">
    <div class="blank-container">
-      <div class="container">
+       <div class="container">
         <div class="left-side" style="background-image: url('img/product1.jpg');"></div>
         <div class="middle">
-          <h3>Product 1</h3>
-          <p>Product details go here.</p>
+            <?php if ($product_in_stock): ?>
+                <h3>Product 1</h3>
+                <p>Product details go here.</p>
+            <?php else: ?>
+                <h3>Product Unavailable</h3>
+                <p>Sorry, this product is currently out of stock.</p>
+            <?php endif; ?>
         </div>
         <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
+            <p>$19.99</p>
+            <p>Additional details</p>
         </div>
-      </div>
     </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product2.png');"></div>
-        <div class="middle">
-          <h3>Product 2</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
     </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product3.png');"></div>
-        <div class="middle">
-          <h3>Product 3</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product4.jpg');"></div>
-        <div class="middle">
-          <h3>Product 4</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product5.jpg');"></div>
-        <div class="middle">
-          <h3>Product 5</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product6.jpg');"></div>
-        <div class="middle">
-          <h3>Product 6</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product7.jpg');"></div>
-        <div class="middle">
-          <h3>Product 7</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product8.jpg');"></div>
-        <div class="middle">
-          <h3>Product 8</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product9.png');"></div>
-        <div class="middle">
-          <h3>Product 9</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product10.jpg');"></div>
-        <div class="middle">
-          <h3>Product 10</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <script src="/project-inventory-system/js/header.js"></script>
 </body>
