@@ -22,7 +22,7 @@ if (isset($_SESSION['username'])) {
   <title>Dashboard UI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="css/index.css" rel="stylesheet">
+  <link href="css/dashboard.css" rel="stylesheet">
   <link href="/project-inventory-system/css/header.css" rel="stylesheet">
 </head>
 <body>
@@ -42,7 +42,7 @@ if (isset($_SESSION['username'])) {
       </div>
     </div>
 
-    <div id="login-dropdown" class="dropdown-box" style="display: none;">
+     <div id="login-dropdown" class="dropdown-box">
         <?php if (isset($_SESSION['username'])): ?>
             <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
         <?php else: ?>

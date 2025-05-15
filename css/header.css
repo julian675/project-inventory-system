@@ -86,3 +86,7 @@
 .login-button:hover {
   background-color: #3b78c3;
 }
+
+.dropdown-box{
+  display: none;
+}

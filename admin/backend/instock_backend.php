@@ -4,18 +4,30 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Add product
 if (isset($_POST['add'])) {
-    $product = $_POST['product'];
+    $product = trim($_POST['product']);
     $items = (int) $_POST['items'];
+    $price = number_format((float) $_POST['price'], 2, '.', '');
+
+    if ($product === '') {
+        echo "Product name is required.";
+        exit;
+    }
+
+    if ($price < 0) {
+        echo "Invalid price: must be 0 or higher.";
+        exit;
+    }
 
     $status = ($items >= 500) ? 'good' : (($items > 200) ? 'warning' : 'critical');
 
-    $stmt = $conn->prepare("INSERT INTO instock (product, items, status) VALUES (?, ?, ?)");
-    $stmt->bind_param("sis", $product, $items, $status);
+    $stmt = $conn->prepare("INSERT INTO instock (product, items, price, status) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sids", $product, $items, $price, $status);
     $stmt->execute();
     exit;
 }
+
+
 
 // Delete selected items
 if (isset($_POST['delete_ids'])) {
@@ -67,6 +79,7 @@ if ($result->num_rows > 0) {
             echo "<tr>
                 <td><input type='checkbox' class='row-checkbox' value='{$row['id']}'></td>
                 <td>{$row['product']}</td>
+                <td>{$row['price']}</td>
                 <td>{$row['items']}</td>
                 <td><span class='status-pill {$statusClass}'></span></td>
                 <td>

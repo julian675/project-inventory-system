@@ -43,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // ✅ Redirect based on role
                 if ($user['role'] === 'admin') {
-                    header("Location: admin/index.php");
+                    header("Location: admin/dashboard.php");
                 } else {
-                    header("Location: manager/index.php"); // Fallback
+                    header("Location: manager/dashboard.php"); // Fallback
                 }
                 exit;
             } else {
@@ -112,27 +112,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="left-content">
             <div class="header-text">
                 <h4>Login</h4>
-                <p class="subtitle">See your growth and get support!</p>
+                <p class="subtitle">Access Your Inventory Dashboard</p>
             </div>
             <div class="form-section">
-                <button class="google-btn">
-                <img src="https://img.icons8.com/color/16/000000/google-logo.png"/>
-                Sign in with Google
-                </button>
                 <form method="POST">
                     <div class="input-group-custom">
+                        <label class="form-label">Username:</label>
                         <input type="text" name="uname" placeholder="Enter your username" required>
                     </div>
 
                     <div class="input-group-custom">
+                        <label class="form-label">Password:</label>
                         <input type="password" name="password" placeholder="Enter your password" required>
                     </div>
-
-                    <div class="options">
-                        <label><input type="checkbox" name="remember"> Remember me</label>
-                        <a href="forgot_password.php">Forgot password?</a>
-                    </div>
-
                     <button type="submit" class="login-btn">Login</button>
                 </form>
 

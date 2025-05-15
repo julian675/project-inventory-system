@@ -8,38 +8,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 // Set username for display
-$username = 'Guest';
-if (isset($_SESSION['username'])) {
-    $username = htmlspecialchars($_SESSION['username']);
-}
+$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
 
 // Database connection
-$servername = "localhost";
-$username_db = "root";
-$password_db = "";
-$dbname = "ims_db"; // Your database name
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "ims_db";
 
-$conn = new mysqli($servername, $username_db, $password_db, $dbname);
+$conn = new mysqli($host, $user, $password, $database);
 
-// Check the connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check product availability (for example, Product 1)
-$product_id = 1; // You can change this dynamically depending on the product you're checking
-$sql = "SELECT * FROM `in_stock` WHERE `product_id` = $product_id AND `quantity` > 0"; 
+// Run the query to fetch inventory data
+$sql = "SELECT product, price FROM instock";
 $result = $conn->query($sql);
-
-// Check if the product is in stock
-$product_in_stock = false;
-if ($result->num_rows > 0) {
-    $product_in_stock = true;
-}
-
-$conn->close();
 ?>
-
 
 
 <!DOCTYPE html>
@@ -70,7 +56,7 @@ $conn->close();
       </div>
     </div>
 
-    <div id="login-dropdown" class="dropdown-box" style="display: none;">
+     <div id="login-dropdown" class="dropdown-box">
         <?php if (isset($_SESSION['username'])): ?>
             <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
         <?php else: ?>
@@ -82,7 +68,7 @@ $conn->close();
 
 
   <div class="sidebar">
-        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/index.php'">
+        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
@@ -116,23 +102,23 @@ $conn->close();
 
   <div class="main">
    <div class="blank-container">
-       <div class="container">
-        <div class="left-side" style="background-image: url('img/product1.jpg');"></div>
-        <div class="middle">
-            <?php if ($product_in_stock): ?>
-                <h3>Product 1</h3>
-                <p>Product details go here.</p>
-            <?php else: ?>
-                <h3>Product Unavailable</h3>
-                <p>Sorry, this product is currently out of stock.</p>
-            <?php endif; ?>
-        </div>
-        <div class="right-side">
-            <p>$19.99</p>
-            <p>Additional details</p>
-        </div>
+      <div class="container">
+       <h1>Products</h1>
+          <!-- In Stock Table -->
+          <table border="1" cellpadding="6" style="border-collapse: collapse; width: 100%;">
+              <thead>
+                  <tr>
+                      <th class="product-class">Product</th>
+                      <th class="price-class">Price (₱)</th>
+                  </tr>
+              </thead>
+              <tbody id="itemsTable">
+                  <?php include 'backend/products_backend.php'; ?>
+              </tbody>
+          </table>
+      </div>
     </div>
-    </div>
+  </div>
 
   <script src="/project-inventory-system/js/header.js"></script>
 </body>

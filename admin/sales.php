@@ -41,7 +41,7 @@ if (isset($_SESSION['username'])) {
       </div>
     </div>
 
-    <div id="login-dropdown" class="dropdown-box" style="display: none;">
+     <div id="login-dropdown" class="dropdown-box">
         <?php if (isset($_SESSION['username'])): ?>
             <a href="/new_exp/logout.php" class="login-button">Log Out</a>
         <?php else: ?>
@@ -53,7 +53,7 @@ if (isset($_SESSION['username'])) {
 
 
   <div class="sidebar">
-        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/index.php'">
+        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>

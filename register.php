@@ -24,43 +24,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fname = trim($_POST['fname']); 
     $lname = trim($_POST['lname']); 
     $uname = trim($_POST['uname']); 
-    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['message'] = "❌ Invalid email format!";
-        $_SESSION['alert_type'] = 'danger';
-    } else {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("INSERT INTO users (fname, lname, uname, email, password, role) VALUES (?, ?, ?, ?, ?, 'manager')");
+    $stmt = $conn->prepare("INSERT INTO users (fname, lname, uname, password, role) VALUES (?, ?, ?, ?, 'manager')");
 
-        if ($stmt) {
-            $stmt->bind_param("sssss", $fname, $lname, $uname, $email, $hashedPassword);
-            
-            if ($stmt->execute()) {
-                $_SESSION['message'] = "✅ New record created successfully!";
-                $_SESSION['alert_type'] = 'success';
-            } else {
-                if (str_contains($stmt->error, 'Duplicate entry')) {
-                    $_SESSION['message'] = "❌ Username or email already exists!";
-                } else {
-                    $_SESSION['message'] = "❌ Error: " . $stmt->error;
-                }
-                $_SESSION['alert_type'] = 'danger';
-            }
-
-            $stmt->close();
+    if ($stmt) {
+        $stmt->bind_param("ssss", $fname, $lname, $uname, $hashedPassword);
+        
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "✅ New record created successfully!";
+            $_SESSION['alert_type'] = 'success';
         } else {
-            $_SESSION['message'] = "❌ Failed to prepare statement: " . $conn->error;
+            if (str_contains($stmt->error, 'Duplicate entry')) {
+                $_SESSION['message'] = "❌ Username already exists!";
+            } else {
+                $_SESSION['message'] = "❌ Error: " . $stmt->error;
+            }
             $_SESSION['alert_type'] = 'danger';
         }
+
+        $stmt->close();
+    } else {
+        $_SESSION['message'] = "❌ Failed to prepare statement: " . $conn->error;
+        $_SESSION['alert_type'] = 'danger';
     }
 
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -110,37 +105,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h4>Register</h4>
                 </div>
                 <div class="form-section">
-                    <form method="POST">
-            <form method="POST" action="register.php">
-                <div class="input-group-custom">
-                    <label class="form-label">Firstname:</label>
-                    <input type="text" name="fname" placeholder="Enter your firstname" required>
-                </div>
+                        <form method="POST">
+                        <form method="POST" action="register.php">
+                    <div class="input-group-custom">
+                        <label class="form-label">Firstname:</label>
+                        <input type="text" name="fname" placeholder="Enter your firstname" required>
+                    </div>
 
-                <div class="input-group-custom">
-                    <label class="form-label">Lastname:</label>
-                    <input type="text" name="lname" placeholder="Enter your lastname" required>
-                </div>
+                    <div class="input-group-custom">
+                        <label class="form-label">Lastname:</label>
+                        <input type="text" name="lname" placeholder="Enter your lastname" required>
+                    </div>
 
-                <div class="input-group-custom">
-                    <label class="form-label">Username:</label>
-                    <input type="text" name="uname" placeholder="Enter your username" required>
-                </div>
+                    <div class="input-group-custom">
+                        <label class="form-label">Username:</label>
+                        <input type="text" name="uname" placeholder="Enter your username" required>
+                    </div>
+                    <div class="input-group-custom">
+                        <label class="form-label">Password:</label>
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                    </div>
 
-                <div class="input-group-custom">
-                    <label class="form-label">Email:</label>
-                    <input type="text" name="email" placeholder="Enter your email" required>
-                </div>
-
-                <div class="input-group-custom">
-                    <label class="form-label">Password:</label>
-                    <input type="password" name="password" placeholder="Enter your password" required>
-                </div>
-
-                <div class="form-footer">
-                    <button type="submit" class="login-btn">Submit</button>
-                    <p class="signup-text">Already registered? <a href="login.php">Click here!</a></p>
-                </div>
+                    <div class="form-footer">
+                        <button type="submit" class="login-btn">Submit</button>
+                        <p class="signup-text">Already registered? <a href="login.php">Click here!</a></p>
+                    </div>
                 </form>
                 </div>
             </div>
