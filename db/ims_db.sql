@@ -10,8 +10,8 @@ CREATE TABLE users (
 CREATE TABLE instock (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product VARCHAR(255) NOT NULL,
-    items INT NOT NULL,
-    status ENUM('good', 'critical', 'warning') NOT NULL,
     price DECIMAL(10, 2) NOT NULL
+    items INT NOT NULL,
+    status ENUM('good', 'critical', 'warning') NOT NULL
 );
 

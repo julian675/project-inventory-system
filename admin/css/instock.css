@@ -3,8 +3,8 @@ body {
       font-family: 'Inter', sans-serif;
       background-color: #f0f2f5;
     }
-    .sidebar {
-position: fixed;
+.sidebar {
+  position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
@@ -61,144 +61,107 @@ position: fixed;
   flex: 1;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   font-size: 14px;
-  height: auto;
-  overflow-y: auto;
-
+  min-height: 700px; /* or whatever base height you want */
 }
 
 
-.instock-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  font-family: Arial, sans-serif;
-}
-
-.instock-table th,
-.instock-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
-}
-
-.instock-table th {
-  background-color: #f4f4f4;
-}
-
-.status-good {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.status-warning {
-  background-color: #e4b314;
-  color: #e6b830;
-}
-
-.status-critical {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-   #addProductForm button {
-        background-color: #0d6efd; /* Bootstrap blue */
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        font-size: 14px;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: background-color 0.3s ease;
-        margin-top: 20px; 
+    .status-pill {
+      display: inline-block;
+      width: 80px;
+      height: 25px;
+      border-radius: 12px;
     }
 
-    /* Hover effect */
-    #addProductForm button:hover {
-        background-color: #0b5ed7; /* Darker blue on hover */
+    .status-good { background-color: rgb(36, 184, 36); }
+    .status-warning { background-color: rgb(238, 207, 32); }
+    .status-critical { background-color: rgb(214, 42, 42); }
+
+    .plus-btn, .minus-btn {
+      padding: 4px 8px;
+      margin: 0 2px;
+      background-color: #007bff;
+      color: white;
+      border: 1px solid #007bff;
+      cursor: pointer;
+      border-radius: 3px;
     }
 
-    /* Optional: spacing for inputs to match button size */
-    #addProductForm input[type="text"],
-    #addProductForm input[type="number"] {
-        padding: 8px 12px;
-        font-size: 14px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        margin-top: 20px; 
+    .plus-btn:hover, .minus-btn:hover {
+      background-color: #0056b3;
     }
 
-    
-table {
+    .price-input {
+      width: 60px;
+      border: 1px solid #ccc;
+      padding: 2px 5px;
+      text-align: right;
+    }
+
+    input[type="text"], input[type="number"], button {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+
+    #searchBox {
+      margin-bottom: 10px;
+      padding: 6px;
+      width: 180px;
+      font-size: 14px;
+    }
+
+    table {
     width: 100%;
     border-collapse: collapse;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    text-align: center;
-    border-left: none;
-    border-right: none;
-}
+    margin-top: 10px;
+    border-top: 2px solid rgb(61, 61, 61);
+    border-bottom: 1px solid rgb(114, 114, 114);
+    }
 
-thead th {
+
+    thead th {
     font-weight: bold;
-    color: #444;
-    padding: 12px 10px;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 2px solid black;
+    }
+
+    tr {
+    border-bottom: 1px solid black;
+    }
+
+    th, td {
+    text-align: center;
+    padding: 8px;
+    }
+
+    .form-production{
+      margin-bottom: 10px; 
+      display: flex; 
+      gap: 10px;
+    }
+.primary-btn {
+  background-color: #007bff; /* Bootstrap blue or choose your own */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
 }
 
-tbody td {
-    padding: 12px 10px;
-    color: #222;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-bottom: 1px solid #eee;
+.primary-btn:hover {
+  background-color: #0056b3; /* darker blue on hover */
 }
 
-tbody tr:last-child td {
-    border-bottom: none;
-}
-
-input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.status-pill {
-    display: inline-block;
-    width: 70px;
-    height: 25px;
-    border-radius: 999px; /* Makes it circular */
-    margin: auto;
-}
-.status-good {
-    background-color: #0fc215;
-}
-.status-warning {
-    background-color: #dda90e;
-}
-.status-critical {
-    background-color: #cc3328;
-}
-
-.search {
+.search-wrapper {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 100px; /* Added */
+  gap: 8px;
 }
 
-.search-section {
-  width: 200px; /* Set to whatever width you want */
-  padding: 5px 10px;
-  font-size: 16px;
+.search-icon {
+  color: #000000;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
-
-.fa-search {
-  font-size: 20px;
-  color: #615e5e;
-}
-

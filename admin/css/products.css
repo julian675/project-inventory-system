@@ -62,9 +62,7 @@ position: fixed;
   flex: 1;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   font-size: 14px;
-  height: auto;
-  overflow-y: auto;
-
+  min-height: 700px; /* or whatever base height you want */
 }
 
 
@@ -111,8 +109,14 @@ tbody td {
     border-bottom: 1px solid #eee;
 }
 
+th, td {
+  text-align: center;
+}
+
+
 tbody tr:last-child td {
     border-bottom: none;
+    
 }
 
 input[type="checkbox"] {
