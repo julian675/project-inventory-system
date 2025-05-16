@@ -61,5 +61,55 @@ position: fixed;
   flex: 1;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   font-size: 14px;
-  height: 700px;
+  height: 500px;
+}
+.container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #0078d7;
+}
+form {
+  display: flex;
+  flex-direction: column;
+}
+label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  margin-top: 15px;
+  color: #444;
+}
+input[type="text"],
+input[type="tel"] {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+input[type="text"]:focus,
+input[type="tel"]:focus {
+  outline: none;
+  border-color: #0078d7;
+  box-shadow: 0 0 5px rgba(0,120,215, 0.4);
+}
+button {
+  margin-top: 30px;
+  padding: 12px;
+  background-color: #0078d7;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #005fa3;
+}
+.message {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: 600;
+  color: green;
 }

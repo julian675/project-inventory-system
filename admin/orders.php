@@ -86,14 +86,31 @@ if (isset($_SESSION['username'])) {
 
 
   <div class="main">
-     <div class="blank-container">
+    <div class="blank-container">
       <div class="container">
         <h1>Orders</h1>
+        <form id="orderForm">
+          <label for="clientName">Client Name</label>
+          <input type="text" id="clientName" name="clientName" required placeholder="Enter client name" />
+
+          <label for="clientAddress">Client Address</label>
+          <input type="text" id="clientAddress" name="clientAddress" required placeholder="Enter client address" />
+
+          <label for="contactNumber">Contact Number</label>
+          <input type="tel" id="contactNumber" name="contactNumber" required pattern="\\+?[0-9\\- ]{7,15}" placeholder="Enter contact number" />
+
+          <label for="companyName">Company Name</label>
+          <input type="text" id="companyName" name="companyName" required placeholder="Enter company name" />
+
+          <button type="submit">Submit Order</button>
+        </form>
+        <div class="message" id="message"></div>
       </div>
     </div>
   </div>
    
 
   <script src="/project-inventory-system/js/header.js"></script>
+  <script src="js/orders.js"></script>
 </body>
 </html>
