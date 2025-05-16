@@ -12,7 +12,7 @@ if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo "<tr>
                 <td>" . htmlspecialchars($row['product']) . "</td>
-                <td style='text-align: right;'>₱" . number_format($row['price'], 2) . "</td>
+                <td>₱" . number_format($row['price'], 2) . "</td>
               </tr>";
     }
 } else {

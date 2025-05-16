@@ -104,22 +104,28 @@ $result = $conn->query($sql);
    <div class="blank-container">
       <div class="container">
        <h1>Products</h1>
+
+       <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Search products..." class="search-option">
+        <i class="fa fa-search search-icon"></i>
+      </div>
           <!-- In Stock Table -->
-          <table border="1" cellpadding="6" style="border-collapse: collapse; width: 100%;">
+          <table border="1" cellpadding="6" class="products-table">
               <thead>
                   <tr>
                       <th class="product-class">Product</th>
                       <th class="price-class">Price (₱)</th>
                   </tr>
               </thead>
-              <tbody id="itemsTable">
+              <tbody id="itemsTable" class="table-item">
                   <?php include 'backend/products_backend.php'; ?>
               </tbody>
           </table>
       </div>
     </div>
   </div>
-
+  
+  <script src="js/products.js"></script>
   <script src="/project-inventory-system/js/header.js"></script>
 </body>
 </html>
