@@ -95,7 +95,7 @@ if (isset($_SESSION['username'])) {
         </div>
         <form id="addProductForm" class="form-production">
           <input type="text" name="product" placeholder="Product name" required>
-          <input type="number" name="items" placeholder="Quantity" min="1" required>
+          <input type="number" name="quantity" placeholder="Quantity" min="1" required>
           <input type="number" name="price" placeholder="Price" step="0.01" min="0" required>
           <button type="submit" class="primary-btn">Add</button>
           <button type="button" id="deleteSelected" class="primary-btn">Delete Selected</button>

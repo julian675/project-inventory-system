@@ -8,43 +8,37 @@ CREATE TABLE users (
 );
 
 CREATE TABLE instock (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     product VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    items INT NOT NULL,
+    quantity INT NOT NULL,
     status ENUM('good', 'critical', 'warning') NOT NULL
 );
 
-CREATE TABLE order_details (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    client_name VARCHAR(255) NOT NULL,
-    client_address VARCHAR(500) NOT NULL,
-    contact_number VARCHAR(50) NOT NULL,
-    company_name VARCHAR(255) NOT NULL,
-    order_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE clients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    address TEXT,
+    contact_number VARCHAR(20),
+    company_name VARCHAR(100)
+);
+
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT,
+    order_date DATETIME,
+    grand_total DECIMAL(10,2), 
+    status ENUM('pending', 'completed', 'canceled') DEFAULT 'pending',
+    FOREIGN KEY (client_id) REFERENCES clients(id)
 );
 
 CREATE TABLE order_items (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    order_id INT UNSIGNED NOT NULL,
-    product_id INT UNSIGNED NOT NULL,
-    quantity INT NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES order_details(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES instock(id) ON DELETE CASCADE
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT,
+    price DECIMAL(10, 2),
+    total_price DECIMAL(10, 2),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES instock(id)
 );
-
--- Sample data for instock
-INSERT INTO instock (product, price, items, status) VALUES
-('Product A', 10.00, 100, 'good'),
-('Product B', 15.50, 50, 'warning'),
-('Product C', 7.25, 200, 'good');
-
--- Sample data for order_details
-INSERT INTO order_details (client_name, client_address, contact_number, company_name) VALUES
-('John Doe', '123 Main St', '+1234567890', 'Example Corp');
-
--- Sample data for order_items (assuming the order_id is 1 and product_id is 1 and 2)
-INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
-(1, 1, 2, 10.00),  -- 2 units of Product A
-(1, 2, 1, 15.50);  -- 1 unit of Product B

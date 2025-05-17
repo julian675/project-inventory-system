@@ -1,53 +1,73 @@
-const form = document.getElementById('orderForm');
-  const messageEl = document.getElementById('message');
+function updateUnitPrice(select) {
+    const selectedProductId = select.value;
+    const allSelects = document.querySelectorAll('select[name="instock[]"]');
+    let duplicateFound = false;
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
+    allSelects.forEach(sel => {
+        if (sel !== select && sel.value === selectedProductId) {
+            duplicateFound = true;
+        }
+    });
 
-    // Gather input values
-    const clientName = form.clientName.value.trim();
-    const clientAddress = form.clientAddress.value.trim();
-    const contactNumber = form.contactNumber.value.trim();
-    const companyName = form.companyName.value.trim();
-
-    // Validate inputs (HTML5 validation mostly handles this)
-    if (!clientName || !clientAddress || !contactNumber || !companyName) {
-      messageEl.style.color = 'red';
-      messageEl.textContent = 'Please fill in all fields correctly.';
-      return;
+    if (duplicateFound) {
+        alert("This product is already selected. Please choose a different product.");
+        select.selectedIndex = 0;
+        return;
     }
 
-    // Capture current time and date
-    const currentDateTime = new Date().toISOString();
+    const productRow = select.closest('.product-row');
+    const price = parseFloat(select.selectedOptions[0].getAttribute('data-price'));
+    productRow.setAttribute('data-price', price);
+    updateRowTotal(productRow);
+    updateGrandTotal();
+}
 
-    // Construct order object
-    const order = {
-      clientName,
-      clientAddress,
-      contactNumber,
-      companyName,
-      timestamp: currentDateTime
-    };
+function changeQty(button, delta) {
+    const input = button.parentNode.querySelector('input[name="quantity[]"]');
+    let qty = parseInt(input.value) + delta;
+    if (qty < 1) qty = 1;
+    input.value = qty;
 
-    // Get existing orders from localStorage (simulate "ims_db")
-    const existingData = localStorage.getItem('ims_db');
-    const orders = existingData ? JSON.parse(existingData) : [];
+    const row = button.closest('.product-row');
+    updateRowTotal(row);
+    updateGrandTotal();
+}
 
-    // Add new order
-    orders.push(order);
+function updateRowTotal(row) {
+    const price = parseFloat(row.getAttribute('data-price')) || 0;
+    const qty = parseInt(row.querySelector('input[name="quantity[]"]').value);
+    const total = price * qty;
+    row.querySelector('.price').innerText = total.toFixed(2);
+}
 
-    // Save back to localStorage
-    localStorage.setItem('ims_db', JSON.stringify(orders));
+function updateGrandTotal() {
+    let total = 0;
+    document.querySelectorAll('.product-row').forEach(row => {
+        const qty = parseInt(row.querySelector('input[name="quantity[]"]').value);
+        const price = parseFloat(row.getAttribute('data-price')) || 0;
+        total += price * qty;
+    });
+    document.getElementById('grandTotal').innerText = total.toFixed(2);
+}
 
-    // Reset form
-    form.reset();
+function addProduct() {
+    const first = document.querySelector('.product-row');
+    const clone = first.cloneNode(true);
+    clone.querySelector('select').selectedIndex = 0;
+    clone.querySelector('input[name="quantity[]"]').value = 1;
+    clone.querySelector('.price').innerText = "0.00";
+    clone.setAttribute('data-price', 0);
+    document.getElementById('instock').appendChild(clone);
+}
 
-    // Show success message
-    messageEl.style.color = 'green';
-    messageEl.textContent = 'Order submitted successfully!';
-
-    // Clear message after 4 seconds
-    setTimeout(() => {
-      messageEl.textContent = '';
-    }, 4000);
-  });
+document.addEventListener("DOMContentLoaded", function () {
+    const rows = document.querySelectorAll(".clickable-row");
+    rows.forEach(row => {
+        row.addEventListener("click", function () {
+            const clientId = this.getAttribute("data-client-id");
+            if (clientId) {
+                window.location.href = "invoice.php?client_id=" + clientId;
+            }
+        });
+    });
+});

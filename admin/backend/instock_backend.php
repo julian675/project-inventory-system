@@ -7,13 +7,13 @@ if ($conn->connect_error) {
 // Add product
 if (isset($_POST['add'])) {
     $product = $_POST['product'];
-    $items = (int)$_POST['items'];
+    $quantity = (int)$_POST['quantity'];
     $price = (float)$_POST['price'];
 
-    $status = ($items >= 500) ? 'good' : (($items > 100) ? 'warning' : 'critical');
+    $status = ($quantity >= 500) ? 'good' : (($quantity > 100) ? 'warning' : 'critical');
 
-    $stmt = $conn->prepare("INSERT INTO instock (product, price, items, status) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("sdis", $product, $price, $items, $status);
+    $stmt = $conn->prepare("INSERT INTO instock (product, price, quantity, status) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sdis", $product, $price, $quantity, $status);
     $stmt->execute();
     exit;
 }
@@ -31,13 +31,13 @@ if (isset($_POST['update_quantity'])) {
     $id = (int) $_POST['id'];
     $delta = (int) $_POST['delta'];
 
-    $conn->query("UPDATE instock SET items = GREATEST(items + $delta, 0) WHERE id = $id");
+    $conn->query("UPDATE instock SET quantity = GREATEST(quantity + $delta, 0) WHERE id = $id");
 
     $conn->query("
         UPDATE instock SET status = 
         CASE 
-            WHEN items >= 500 THEN 'good'
-            WHEN items > 200 THEN 'warning'
+            WHEN quantity >= 500 THEN 'good'
+            WHEN quantity > 200 THEN 'warning'
             ELSE 'critical'
         END
         WHERE id = $id
@@ -61,7 +61,7 @@ if ($result->num_rows > 0) {
         echo "<tr>
                 <td><input type='checkbox' class='row-checkbox' value='{$row['id']}'></td>
                 <td>{$row['product']}</td>
-                <td>{$row['items']}</td>
+                <td>{$row['quantity']}</td>
                 <td><span class='{$statusClass}'></span></td>
                 <td>
                     <button class='minus-btn' data-id='{$row['id']}'>−</button>

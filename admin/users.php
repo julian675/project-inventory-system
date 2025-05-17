@@ -7,6 +7,17 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+// DB connection
+$host = "localhost";
+$db = "ims_db";
+$user = "root";
+$pass = ""; // change if you have a password
+
+$conn = new mysqli($host, $user, $pass, $db);
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
+
 // Set username for display
 $username = 'Guest';
 if (isset($_SESSION['username'])) {
@@ -87,6 +98,41 @@ if (isset($_SESSION['username'])) {
 
 
   <div class="main">
+<div class="main">
+  <h2 style="margin-bottom: 1rem;">Users Table</h2>
+  <table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+      $sql = "SELECT id, username, role, email FROM users";
+      $result = $conn->query($sql);
+
+      if ($result && $result->num_rows > 0):
+          while ($row = $result->fetch_assoc()):
+      ?>
+          <tr>
+              <td><?= htmlspecialchars($row['id']) ?></td>
+              <td><?= htmlspecialchars($row['username']) ?></td>
+              <td><?= htmlspecialchars($row['role']) ?></td>
+              <td><?= htmlspecialchars($row['email']) ?></td>
+          </tr>
+      <?php
+          endwhile;
+      else:
+          echo "<tr><td colspan='4'>No users found.</td></tr>";
+      endif;
+      ?>
+    </tbody>
+  </table>
+</div>
+
 </div>
   
 
