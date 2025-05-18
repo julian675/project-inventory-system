@@ -42,3 +42,13 @@ CREATE TABLE order_items (
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (product_id) REFERENCES instock(id)
 );
+
+CREATE TABLE purchases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT UNSIGNED,
+    quantity INT,
+    price DECIMAL(10,2),
+    purchase_date DATETIME,
+    FOREIGN KEY (product_id) REFERENCES instock(id)
+);
+

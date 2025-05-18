@@ -80,10 +80,6 @@ $result = $conn->query($sql);
             <i class="fas fa-tags sidebar-icon"></i>
             <div class="menu-label">Products</div> 
         </div>
-        <div class="menu-item sales" onclick="window.location.href='/project-inventory-system/manager/sales.php'">
-            <i class="fas fa-cash-register sidebar-icon"></i>
-            <div class="menu-label">Sales</div>
-          </div>
           <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/manager/orders.php'">
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>

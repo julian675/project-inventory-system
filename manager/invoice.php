@@ -82,10 +82,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
         <i class="fas fa-tags sidebar-icon"></i>
         <div class="menu-label">Products</div> 
     </div>
-    <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/sales.php'">
-        <i class="fas fa-cash-register sidebar-icon"></i>
-        <div class="menu-label">Sales</div>
-    </div>
     <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/orders.php'">
         <i class="fas fa-receipt sidebar-icon"></i>
         <div class="menu-label">Orders</div>

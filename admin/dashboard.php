@@ -1,18 +1,30 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
 }
 
-// Set username for display
 $username = 'Guest';
 if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
+
+// 1️⃣ CONNECT TO DATABASE
+$conn = new mysqli('localhost', 'root', '', 'ims_db');
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$revenue = $conn->query("SELECT SUM(grand_total) AS total FROM orders WHERE status = 'completed'")->fetch_assoc()['total'] ?? 0;
+$sales_return = $conn->query("SELECT SUM(grand_total) AS total FROM orders WHERE status = 'canceled'")->fetch_assoc()['total'] ?? 0;
+$purchase = $conn->query("SELECT SUM(quantity * price) AS total FROM purchases")->fetch_assoc()['total'] ?? 0;
+
+$income = $revenue - $purchase;
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -66,10 +78,6 @@ if (isset($_SESSION['username'])) {
             <i class="fas fa-tags sidebar-icon"></i>
             <div class="menu-label">Products</div> 
         </div>
-        <div class="menu-item sales" onclick="window.location.href='/project-inventory-system/admin/sales.php'">
-            <i class="fas fa-cash-register sidebar-icon"></i>
-            <div class="menu-label">Sales</div>
-          </div>
           <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>
@@ -88,12 +96,12 @@ if (isset($_SESSION['username'])) {
 
   <div class="main">
 
-        <div class="card-container">
-          <div class="card">💵 Revenue<br><strong>+ 30,000</strong></div>
-          <div class="card">💵 Sales Return<br><strong>+ 30,000</strong></div>
-          <div class="card">💵 Purchase<br><strong>+ 30,000</strong></div>
-          <div class="card">💵 Income<br><strong>+ 30,000</strong></div>
-        </div>
+      <div class="card-container">
+        <div class="card">💵 Revenue<br><strong>₱<?= number_format($revenue, 2) ?></strong></div>
+        <div class="card">💵 Sales Return<br><strong>₱<?= number_format($sales_return, 2) ?></strong></div>
+        <div class="card">💵 Purchase<br><strong>₱<?= number_format($purchase, 2) ?></strong></div>
+        <div class="card">💵 Income<br><strong>₱<?= number_format($income, 2) ?></strong></div>
+      </div>
 
       <div class="chart-grid-2">
       <div class="chart-box">Bar Chart</div>
