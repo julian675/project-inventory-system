@@ -83,13 +83,6 @@ if (isset($_SESSION['username'])) {
 
  <div class="main">
 
-        <div class="card-container">
-          <div class="card">💵 Revenue<br><strong>+ 30,000</strong></div>
-          <div class="card">💵 Sales Return<br><strong>+ 30,000</strong></div>
-          <div class="card">💵 Purchase<br><strong>+ 30,000</strong></div>
-          <div class="card">💵 Income<br><strong>+ 30,000</strong></div>
-        </div>
-
       <div class="chart-grid-2">
       <div class="chart-box">Bar Chart</div>
       <div class="pie-box">Pie Chart</div>
@@ -105,18 +98,6 @@ if (isset($_SESSION['username'])) {
           <tbody>
             <tr><td>001</td><td>2025-05-01</td><td>20</td><td>5</td><td>Low</td></tr>
             <tr><td>002</td><td>2025-05-02</td><td>10</td><td>2</td><td>Critical</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="table-card">
-        <h4>Top Selling Products</h4>
-        <table>
-          <thead>
-            <tr><th>Order ID</th><th>Quantity</th><th>Alert amt.</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>011</td><td>50</td><td>10</td></tr>
-            <tr><td>012</td><td>40</td><td>8</td></tr>
           </tbody>
         </table>
       </div>

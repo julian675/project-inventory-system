@@ -48,28 +48,10 @@ position: fixed;
   margin-top: 5px;
   text-align: center;
 }
-
-   .card-container {
-      display: flex;
-      gap: 20px;
-      margin: 20px 0;
-    }
-    .card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      flex: 1;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      font-size: 14px;
-    }
-    .card strong {
-      font-size: 18px;
-      color: #2e7d32;
-    }
 .chart-grid-2, .card-grid-2 {
   display: flex;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-top: 20px; /* Add this line to push it down */
 }
 
 .chart-grid-2 > *:first-child { flex: 7; }
