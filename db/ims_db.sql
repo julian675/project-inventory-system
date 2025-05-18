@@ -33,22 +33,13 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMAENT PRIMARY KEY,
     order_id INT,
     product_id INT UNSIGNED,
     quantity INT,
     price DECIMAL(10, 2),
     total_price DECIMAL(10, 2),
     FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES instock(id)
-);
-
-CREATE TABLE purchases (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    product_id INT UNSIGNED,
-    quantity INT,
-    price DECIMAL(10,2),
-    purchase_date DATETIME,
     FOREIGN KEY (product_id) REFERENCES instock(id)
 );
 
