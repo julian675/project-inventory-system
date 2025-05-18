@@ -1,27 +1,28 @@
-    .header {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 10;
-    
-    }
+/* The header remains at the top and does not scroll */
+.header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
 
- .left-icon {
+/* Ensure the left icon is positioned correctly */
+.left-icon {
   font-size: 25px;
   color: rgb(0, 0, 0);
   z-index: 20;
   cursor: pointer;
-  margin-left: 25px; /* 👈 adjust this value as needed */
+  margin-left: 25px;
 }
 
-
+/* The right contents, including the dropdown and login button, are in a flex container */
 .right-contents {
   font-size: 25px;
   color: rgb(0, 0, 0);
@@ -30,18 +31,20 @@
   gap: 30px;
   align-items: center;
   padding: 5px 10px;
-  justify-content: center; /* Added to center the content inside */
+  justify-content: center;
 }
 
+/* User info block (part of right contents) */
 .user-info {
   color: rgb(2, 2, 2);
   z-index: 10;
-  font-family: 'Poppins', sans-serif; /* 👈 Here */
+  font-family: 'Poppins', sans-serif;
 }
 
+/* The dropdown box, positioned below the header */
 .dropdown-box {
   position: absolute;
-  top: 80px;
+  top: 60px; /* Align with the bottom of the header */
   right: 15px;
   width: 200px;
   height: 225px;
@@ -50,23 +53,13 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   border-radius: 5px;
-
   display: flex;
-  align-items: center;       /* ✅ Vertically centers content */
-  justify-content: center;   /* ✅ Horizontally centers content */
-}
-
-.right-contents {
-  font-size: 25px;
-  color: rgb(0, 0, 0);
-  cursor: pointer;
-  display: flex;
-  gap: 30px;
   align-items: center;
-  padding: 5px 10px;
-  justify-content: center; /* Added to center the content inside */
+  justify-content: center;
+  display: none; /* Hidden by default */
 }
 
+/* Style for the login button */
 .login-button {
   display: inline-block;
   padding: 12px 24px;
@@ -78,14 +71,16 @@
   transition: background-color 0.3s ease;
   text-align: center;
   width: 100px;
-  margin-top: 150px;  /* Move the button down */
+  margin-top: 15px;
+  margin-left: 25px; /* Adjusted position */
 }
 
-
+/* Hover effect for the login button */
 .login-button:hover {
   background-color: #3b78c3;
 }
 
-.dropdown-box{
+/* Ensuring the dropdown box is initially hidden, only shown when required */
+.dropdown-box {
   display: none;
 }
