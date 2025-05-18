@@ -75,19 +75,18 @@ $result = $conn->query("SELECT * FROM instock");
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $statusClass = 'status-pill status-' . strtolower($row['status']);
-        echo "<tr>
-                <td><input type='checkbox' class='row-checkbox' value='{$row['id']}'></td>
-                <td>{$row['product']}</td>
-                <td>{$row['quantity']}</td>
-                <td><span class='{$statusClass}'></span></td>
-                <td>
-                    <button class='minus-btn' data-id='{$row['id']}'>−</button>
-                    <button class='plus-btn' data-id='{$row['id']}'>+</button>
-                </td>
-                <td><input type='number' step='0.01' class='price-input' data-id='{$row['id']}' value='{$row['price']}'></td>
-              </tr>";
+            echo "<tr>
+                    <td>{$row['product']}</td>
+                    <td>{$row['quantity']}</td>
+                    <td><span class='{$statusClass}'></span></td>
+                    <td>
+                        <!-- Remove the minus button -->
+                        <button class='plus-btn' data-id='{$row['id']}'>+</button>
+                    </td>
+                    <td><input type='number' step='0.01' class='price-input' data-id='{$row['id']}' value='{$row['price']}'></td>
+                </tr>";
     }
 } else {
-    echo "<tr><td colspan='6'>No items in stock</td></tr>";
+    echo "<tr><td colspan='5'>No items in stock</td></tr>";
 }
 ?>

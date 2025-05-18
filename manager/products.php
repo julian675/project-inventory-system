@@ -3,16 +3,30 @@ session_start();
 
 // Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'manager') {
-    header("Location: manager/login.php");
+    header("Location: admin/login.php");
     exit;
 }
 
 // Set username for display
-$username = 'Guest';
-if (isset($_SESSION['username'])) {
-    $username = htmlspecialchars($_SESSION['username']);
+$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
+
+// Database connection
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "ims_db";
+
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
+
+// Run the query to fetch inventory data
+$sql = "SELECT product, price FROM instock";
+$result = $conn->query($sql);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +56,7 @@ if (isset($_SESSION['username'])) {
       </div>
     </div>
 
-    <div id="login-dropdown" class="dropdown-box" style="display: none;">
+     <div id="login-dropdown" class="dropdown-box">
         <?php if (isset($_SESSION['username'])): ?>
             <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
         <?php else: ?>
@@ -74,6 +88,10 @@ if (isset($_SESSION['username'])) {
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>
           </div>
+          <div class="menu-item users" onclick="window.location.href='/project-inventory-system/manager/users.php'">
+            <i class="fas fa-users sidebar-icon"></i>
+            <div class="menu-label">Users</div>
+          </div>
           <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/manager/invoice.php'">
             <i class="fas fa-file-invoice sidebar-icon"></i>
             <div class="menu-label">Invoice</div>
@@ -82,140 +100,32 @@ if (isset($_SESSION['username'])) {
 
 
 
- <div class="main">
+  <div class="main">
    <div class="blank-container">
       <div class="container">
-        <div class="left-side" style="background-image: url('img/product1.jpg');"></div>
-        <div class="middle">
-          <h3>Product 1</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
+       <h1>Products</h1>
+
+       <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Search products..." class="search-option">
+        <i class="fa fa-search search-icon"></i>
       </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product2.png');"></div>
-        <div class="middle">
-          <h3>Product 2</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product3.png');"></div>
-        <div class="middle">
-          <h3>Product 3</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product4.jpg');"></div>
-        <div class="middle">
-          <h3>Product 4</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product5.jpg');"></div>
-        <div class="middle">
-          <h3>Product 5</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product6.jpg');"></div>
-        <div class="middle">
-          <h3>Product 6</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product7.jpg');"></div>
-        <div class="middle">
-          <h3>Product 7</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product8.jpg');"></div>
-        <div class="middle">
-          <h3>Product 8</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product9.png');"></div>
-        <div class="middle">
-          <h3>Product 9</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
-      </div>
-    </div>
-    <div class="blank-container">
-      <div class="container">
-        <div class="left-side" style="background-image: url('img/product10.jpg');"></div>
-        <div class="middle">
-          <h3>Product 10</h3>
-          <p>Product details go here.</p>
-        </div>
-        <div class="right-side">
-          <p>$19.99</p>
-          <p>Additional details</p>
-        </div>
+          <!-- In Stock Table -->
+          <table border="1" cellpadding="6" class="products-table">
+              <thead>
+                  <tr>
+                      <th class="product-class">Product</th>
+                      <th class="price-class">Price (₱)</th>
+                  </tr>
+              </thead>
+              <tbody id="itemsTable" class="table-item">
+                  <?php include 'backend/products_backend.php'; ?>
+              </tbody>
+          </table>
       </div>
     </div>
   </div>
-   
-
+  
+  <script src="js/products.js"></script>
   <script src="/project-inventory-system/js/header.js"></script>
 </body>
 </html>

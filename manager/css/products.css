@@ -54,41 +54,95 @@ position: fixed;
   margin: 20px 0;
 }
 
+
 .container {
   background: #fff;
-  padding: 0;
+  padding: 20px;
   border-radius: 12px;
   flex: 1;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   font-size: 14px;
-  height: 125px;
-  display: flex;
-  overflow: hidden; /* Ensures background image doesn't overflow rounded corners */
+  min-height: 700px; /* or whatever base height you want */
 }
 
-.left-side {
-  flex: 0 0 300px; /* Increase this number to make it wider */
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 12px 0 0 12px;
-}
-
-.middle {
-  flex: 2;
+.products-table {
+  width: 100%;
   text-align: center;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 12px; /* Rounded corners */
+  overflow: hidden; /* Ensures content inside doesn't overflow the rounded edges */
+  border-collapse: separate; /* Needed for border-radius to apply */
+  border-spacing: 0; /* Remove space between cells */
 }
 
-.right-side {
-  flex: 1;
-  text-align: right;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.products-table th,
+.products-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  height: 60px;
+}
+
+/* Header */
+.products-table thead th {
+  background-color: #e0e0e0;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Left column (Product) */
+.products-table td:nth-child(1) {
+  background-color: #ffffff;
+  color: #000;
+}
+
+/* Right column (Price) */
+.products-table td:nth-child(2) {
+  background-color: #cceeff;
+  color: #000;
+}
+
+/* Column widths */
+.products-table th.product-class,
+.products-table td.product-class {
+  width: 80%;
+}
+
+.products-table th.price-class,
+.products-table td.price-class {
+  width: 20%;
+}
+
+.search-option{
+  padding: 8px; 
+  width: 100%; 
+  max-width: 300px; 
+  border-radius: 6px; 
+  border: 1px solid #ccc;
+}
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 10px;
+}
+
+.search-option {
+  width: 100%;
+  padding: 8px 35px 8px 10px; /* space for the icon on the right */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.search-icon {
+  position: absolute;
+  right: -70px; /* Adjust as needed */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none;
+  font-size: 20px; /* Increase this value for larger icon */
 }

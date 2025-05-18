@@ -24,6 +24,7 @@ if (isset($_SESSION['username'])) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="css/instock.css" rel="stylesheet">
   <link href="/project-inventory-system/css/header.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
 </head>
 <body>
 
@@ -82,13 +83,39 @@ if (isset($_SESSION['username'])) {
 
 
 
-  <div class="main">
-     <div class="blank-container">
-      <div class="container"></div>
+<!-- Main content -->
+<div class="main">
+  <div class="blank-container">
+    <div class="container">
+      <h1>In Stock</h1>
+        <div class="search-wrapper">
+          <input type="text" id="searchBox" placeholder="Search by product name...">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        <form id="addProductForm" class="form-production">
+          <input type="text" name="product" placeholder="Product name" required>
+          <input type="number" name="quantity" placeholder="Quantity" min="1" required>
+          <input type="number" name="price" placeholder="Price" step="0.01" min="0" required>
+          <button type="submit" class="primary-btn">Add</button>
+        </form>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Change</th>
+              <th>Unit Price</th>
+            </tr>
+          </thead>
+          <tbody id="itemsTable"></tbody>
+        </table>
     </div>
   </div>
+</div>
    
-
+  <script src="js/instock.js"></script>
   <script src="/project-inventory-system/js/header.js"></script>
 </body>
 </html>

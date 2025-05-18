@@ -6,7 +6,26 @@ function loadItems() {
 
 $("#addProductForm").submit(function(e) {
   e.preventDefault();
-  $.post("/project-inventory-system/admin/backend/instock_backend.php", $(this).serialize() + '&add=true', loadItems);
+  const form = this;
+
+  $.ajax({
+    url: "/project-inventory-system/admin/backend/instock_backend.php",
+    method: "POST",
+    data: $(form).serialize() + '&add=true',
+    success: function(response) {
+      // On success, reload items and reset form
+      loadItems();
+      form.reset();
+      alert('Product added successfully.');
+    },
+    error: function(xhr) {
+      if (xhr.status === 409) {
+        alert("Product already exists!");
+      } else {
+        alert("Failed to add product.");
+      }
+    }
+  });
 });
 
 $("#deleteSelected").click(function() {
