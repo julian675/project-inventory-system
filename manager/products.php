@@ -88,10 +88,6 @@ $result = $conn->query($sql);
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>
           </div>
-          <div class="menu-item users" onclick="window.location.href='/project-inventory-system/manager/users.php'">
-            <i class="fas fa-users sidebar-icon"></i>
-            <div class="menu-label">Users</div>
-          </div>
           <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/manager/invoice.php'">
             <i class="fas fa-file-invoice sidebar-icon"></i>
             <div class="menu-label">Invoice</div>
