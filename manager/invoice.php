@@ -34,7 +34,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     <title>Client Orders</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="css/invoice.css" rel="stylesheet">
     <link href="/project-inventory-system/css/header.css" rel="stylesheet">
     <script>
@@ -46,28 +45,28 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
 </head>
 <body>
 
-   <div class="header">
-      <div class="left-icon">
-        <i class="fas fa-bars"></i>
-      </div>
-      <div class="right-contents">
+<!-- Header -->
+<div class="header">
+    <div class="left-icon"><i class="fas fa-bars"></i></div>
+    <div class="right-contents">
         <i class="fas fa-search"></i>
         <i class="fas fa-bell"></i>
         <div class="user-info">
-          <i class="fas fa-circle-user"></i>
-          <span id="user-name"><?= $username ?></span>
+            <i class="fas fa-circle-user"></i>
+            <span id="user-name"><?= htmlspecialchars($username) ?></span>
         </div>
         <i class="fas fa-caret-down" onclick="toggleLogin()"></i>
-      </div>
     </div>
+</div>
 
-     <div id="login-dropdown" class="dropdown-box">
-        <?php if (isset($_SESSION['username'])): ?>
-            <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
-        <?php else: ?>
-            <a href="/project-inventory-system/login.php" class="login-button">Log In</a>
-        <?php endif; ?>
-    </div>
+<!-- Dropdown -->
+<div id="login-dropdown" class="dropdown-box">
+    <?php if (isset($_SESSION['username'])): ?>
+        <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
+    <?php else: ?>
+        <a href="/project-inventory-system/login.php" class="login-button">Log In</a>
+    <?php endif; ?>
+</div>
 
 <!-- Sidebar -->
 <div class="sidebar">
@@ -87,11 +86,11 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
         <i class="fas fa-cash-register sidebar-icon"></i>
         <div class="menu-label">Sales</div>
     </div>
-    <div class="menu-item">
+    <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/orders.php'">
         <i class="fas fa-receipt sidebar-icon"></i>
         <div class="menu-label">Orders</div>
     </div>
-    <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/invoice.php'">
+    <div class="menu-item">
         <i class="fas fa-file-invoice sidebar-icon"></i>
         <div class="menu-label">Invoice</div>
     </div>
