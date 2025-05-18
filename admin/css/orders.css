@@ -135,7 +135,12 @@ button:hover {
     .form-section { flex: 1; min-width: 500px; }
     .form-section.instock { margin-left: auto; }
     .scroll-box { height: 200px; width: auto; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9; margin-bottom: 10px; }
-    .product-row { margin-bottom: 10px; }
+    .product-row { 
+    display: flex;
+    justify-content: center;  /* to center the group */
+    gap: 15px;                /* space between the elements */
+    padding: 10px;
+    }
     label { display: block; margin-bottom: 10px; }
 
 .form-and-list {
@@ -150,7 +155,6 @@ button:hover {
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   font-size: 14px;
-  width: 100%;
 }
 
 .product-row {

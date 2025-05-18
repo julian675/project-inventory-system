@@ -35,7 +35,7 @@ CREATE TABLE orders (
 CREATE TABLE order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
-    product_id INT,
+    product_id INT UNSIGNED,
     quantity INT,
     price DECIMAL(10, 2),
     total_price DECIMAL(10, 2),

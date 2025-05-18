@@ -244,7 +244,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
                 <button type="button" onclick="changeQty(this, 1)">+</button>
                 <span>₱<span class="price">0.00</span></span>
               </div>
-            </div>
+
+          </div>
 
             <p><strong>Total: ₱<span id="grandTotal">0.00</span></strong></p>
             <button type="button" onclick="addProduct()">Add Another Product</button>

@@ -37,8 +37,9 @@ if ($action === 'remove') {
     $stmt->bind_param("i", $target_id);
     $stmt->execute();
     $stmt->close();
-    header("Location: users.php?msg=removed");
+    echo "OK";
     exit;
+
 }
 
 if ($action === 'promote') {
@@ -46,7 +47,7 @@ if ($action === 'promote') {
     $stmt->bind_param("i", $target_id);
     $stmt->execute();
     $stmt->close();
-    header("Location: users.php?msg=promoted");
+    echo "OK";
     exit;
 }
 ?>

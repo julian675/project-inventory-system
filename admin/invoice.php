@@ -33,6 +33,7 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
 <head>
     <title>Client Orders</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link href="css/invoice.css" rel="stylesheet">
     <link href="/project-inventory-system/css/header.css" rel="stylesheet">
     <script>
