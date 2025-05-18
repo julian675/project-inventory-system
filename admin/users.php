@@ -1,28 +1,33 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
+// Only allow logged-in admins
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
 }
 
-// DB connection
+// Set username for display safely
+$username = 'Guest';
+if (isset($_SESSION['username'])) {
+    $username = htmlspecialchars($_SESSION['username']);
+}
+
+// Database connection
 $host = "localhost";
 $db = "ims_db";
 $user = "root";
-$pass = ""; // change if you have a password
+$pass = "";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-// Set username for display
-$username = 'Guest';
-if (isset($_SESSION['username'])) {
-    $username = htmlspecialchars($_SESSION['username']);
-}
+// Fetch users
+$sql = "SELECT id, uname, fname, lname, role FROM users";
+$result = $conn->query($sql);
+
 ?>
 
 <!DOCTYPE html>
@@ -38,104 +43,129 @@ if (isset($_SESSION['username'])) {
 </head>
 <body>
 
-    <div class="header">
-      <div class="left-icon">
-        <i class="fas fa-bars"></i>
-      </div>
-      <div class="right-contents">
-        <i class="fas fa-search"></i>
-        <i class="fas fa-bell"></i>
-        <div class="user-info">
-          <i class="fas fa-circle-user"></i>
-          <span id="user-name"><?= $username ?></span>
-        </div>
-        <i class="fas fa-caret-down" onclick="toggleLogin()"></i>
-      </div>
-    </div>
-
-    <div id="login-dropdown" class="dropdown-box">
-        <?php if (isset($_SESSION['username'])): ?>
-            <a href="/new_exp/logout.php" class="login-button">Log Out</a>
-        <?php else: ?>
-            <a href="/new_exp/login.php" class="login-button">Log In</a>
-        <?php endif; ?>
-    </div>
-
-
-
-
-  <div class="sidebar">
-        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
-          <i class="fas fa-chart-line sidebar-icon"></i>
-          <div class="menu-label">Dashboard</div> 
-        </div>
-        <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/admin/instock.php'">
-            <i class="fas fa-boxes sidebar-icon"></i>
-            <div class="menu-label">In Stock</div> 
-        </div>
-        <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
-            <i class="fas fa-tags sidebar-icon"></i>
-            <div class="menu-label">Products</div> 
-        </div>
-        <div class="menu-item sales" onclick="window.location.href='/project-inventory-system/admin/sales.php'">
-            <i class="fas fa-cash-register sidebar-icon"></i>
-            <div class="menu-label">Sales</div>
-          </div>
-          <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
-            <i class="fas fa-receipt sidebar-icon"></i>
-            <div class="menu-label">Orders</div>
-          </div>
-          <div class="menu-item users">
-            <i class="fas fa-users sidebar-icon"></i>
-            <div class="menu-label">Users</div>
-          </div>
-          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
-            <i class="fas fa-file-invoice sidebar-icon"></i>
-            <div class="menu-label">Invoice</div>
-          </div>
+<div class="header">
+  <div class="left-icon">
+    <i class="fas fa-bars"></i>
   </div>
+  <div class="right-contents">
+    <i class="fas fa-search"></i>
+    <i class="fas fa-bell"></i>
+    <div class="user-info">
+      <i class="fas fa-circle-user"></i>
+      <span id="user-name"><?= $username ?></span>
+    </div>
+    <i class="fas fa-caret-down" onclick="toggleLogin()"></i>
+  </div>
+</div>
 
+<div id="login-dropdown" class="dropdown-box">
+    <?php if (isset($_SESSION['username'])): ?>
+        <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
+    <?php else: ?>
+        <a href="/project-inventory-system/login.php" class="login-button">Log In</a>
+    <?php endif; ?>
+</div>
 
+<div class="sidebar">
+  <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
+    <i class="fas fa-chart-line sidebar-icon"></i>
+    <div class="menu-label">Dashboard</div> 
+  </div>
+  <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/admin/instock.php'">
+      <i class="fas fa-boxes sidebar-icon"></i>
+      <div class="menu-label">In Stock</div> 
+  </div>
+  <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
+      <i class="fas fa-tags sidebar-icon"></i>
+      <div class="menu-label">Products</div> 
+  </div>
+  <div class="menu-item sales" onclick="window.location.href='/project-inventory-system/admin/sales.php'">
+      <i class="fas fa-cash-register sidebar-icon"></i>
+      <div class="menu-label">Sales</div>
+  </div>
+  <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
+      <i class="fas fa-receipt sidebar-icon"></i>
+      <div class="menu-label">Orders</div>
+  </div>
+  <div class="menu-item users">
+    <i class="fas fa-users sidebar-icon"></i>
+    <div class="menu-label">Users</div>
+  </div>
+  <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
+    <i class="fas fa-file-invoice sidebar-icon"></i>
+    <div class="menu-label">Invoice</div>
+  </div>
+</div>
 
-  <div class="main">
 <div class="main">
-  <h2 style="margin-bottom: 1rem;">Users Table</h2>
-  <table border="1" cellpadding="10" cellspacing="0">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Role</th>
-        <th>Email</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php
-      $sql = "SELECT id, username, role, email FROM users";
-      $result = $conn->query($sql);
-
-      if ($result && $result->num_rows > 0):
-          while ($row = $result->fetch_assoc()):
-      ?>
+  <div class="container">
+    <h2>Users Table</h2>
+    <?php if (isset($_GET['msg'])): ?>
+      <p style="color: green;">
+        <?php
+          if ($_GET['msg'] == 'removed') echo "User account removed successfully.";
+          elseif ($_GET['msg'] == 'promoted') echo "User promoted to admin successfully.";
+        ?>
+      </p>
+    <?php endif; ?>
+    <div class="center-wrapper">
+      <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
           <tr>
-              <td><?= htmlspecialchars($row['id']) ?></td>
-              <td><?= htmlspecialchars($row['username']) ?></td>
-              <td><?= htmlspecialchars($row['role']) ?></td>
-              <td><?= htmlspecialchars($row['email']) ?></td>
+            <th style="width: 80%;">Account Info</th>
+            <th style="width: 20%;">Role & Actions</th>
           </tr>
-      <?php
-          endwhile;
-      else:
-          echo "<tr><td colspan='4'>No users found.</td></tr>";
-      endif;
-      ?>
-    </tbody>
-  </table>
+        </thead>
+        <tbody>
+          <?php
+          if ($result && $result->num_rows > 0):
+              while ($row = $result->fetch_assoc()):
+          ?>
+              <tr>
+                <td>
+                  <div>
+                    <div><strong>Username:</strong> <?= htmlspecialchars($row['uname']) ?></div>
+                    <div><strong>First Name:</strong> <?= htmlspecialchars($row['fname']) ?></div>
+                    <div><strong>Last Name:</strong> <?= htmlspecialchars($row['lname']) ?></div>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <div><strong><?= htmlspecialchars($row['role']) ?></strong></div>
+                    <select onchange="handleAction(this.value, <?= $row['id'] ?>)" style="width: 100px; margin-top: 5px;">
+                      <option value="">Actions</option>
+                      <option value="promote">Promote to Admin</option>
+                      <option value="remove">Remove Account</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+          <?php
+              endwhile;
+          else:
+              echo "<tr><td colspan='2'>No users found.</td></tr>";
+          endif;
+          ?>
+        </tbody>
+      </table>
+    </div>
+  </div>           
 </div>
 
-</div>
-  
+<script>
+function handleAction(action, userId) {
+  if (!action) return;
+  const confirmMsg = action === 'promote'
+    ? "Are you sure you want to promote this user to Admin?"
+    : "Are you sure you want to remove this account?";
 
-  <script src="/project-inventory-system/js/header.js"></script>
+  if (confirm(confirmMsg)) {
+    window.location.href = `/project-inventory-system/admin/backend/user_action.php?action=${action}&id=${userId}`;
+  }
+}
+</script>
+
+
+<script src="/project-inventory-system/js/header.js"></script>
 </body>
 </html>

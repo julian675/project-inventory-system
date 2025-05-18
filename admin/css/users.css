@@ -20,7 +20,7 @@ position: fixed;
     }
  .main {
   margin-left: 80px;
-  margin-top: 30px; /* So content doesn't go under header */
+  margin-top: 50px; /* So content doesn't go under header */
   padding: 20px;
 }
 
@@ -65,3 +65,31 @@ position: fixed;
 .main th {
   background-color: #f4f4f4;
 }
+
+.container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  flex: 1;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  font-size: 14px;
+  height: auto;
+  min-height: 600px; /* or whatever base height you want */
+}
+
+ .center-wrapper {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .center-wrapper table {
+    margin: 0 auto;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .center-wrapper th,
+  .center-wrapper td {
+    text-align: center; /* This centers all table text */
+    vertical-align: middle; /* Optional: vertically center content too */
+  }
