@@ -33,7 +33,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_items (
-    id INT AUTO_INCREMAENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
     product_id INT UNSIGNED,
     quantity INT,
