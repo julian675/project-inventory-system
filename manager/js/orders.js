@@ -23,16 +23,18 @@ function updateUnitPrice(select) {
 }
 
 function removeProductRow(button) {
-  const row = button.closest('.product-row');
-  row.style.backgroundColor = '#ffcccc'; // light red
-  row.style.opacity = '0.6'; // optional, to dim the row
-  row.querySelectorAll('input, select, button').forEach(el => {
-    el.disabled = true; // optional: disable inputs in the row
-  });
+    const row = button.closest('.product-row');
+    row.classList.add('removed-row');  // visually mark as removed
+    row.setAttribute('data-removed', 'true');
 
-  // Optionally, mark for ignoring during form submission:
-  row.setAttribute('data-removed', 'true');
+    // Optionally disable all inputs to avoid submission
+    row.querySelectorAll('input, select, button').forEach(el => {
+        el.disabled = true;
+    });
+
+    updateGrandTotal();
 }
+
 
 // Other existing JavaScript functions...
 
@@ -82,6 +84,19 @@ function addProduct() {
 document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll(".clickable-row");
     rows.forEach(row => {
+        row.addEventListener("click", function () {
+            const clientId = this.getAttribute("data-client-id");
+            if (clientId) {
+                window.location.href = "invoice.php?client_id=" + clientId;
+            }
+        });
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const rows = document.querySelectorAll(".clickable-row");
+    rows.forEach(row => {
+        if (row.classList.contains('removed-row')) return; // skip removed rows
         row.addEventListener("click", function () {
             const clientId = this.getAttribute("data-client-id");
             if (clientId) {

@@ -10,6 +10,15 @@ while ($row = $inventory_result->fetch_assoc()) {
     $inventory[] = $row;
 }
 
+if (isset($_POST['remove_order'])) {
+    $order_id = intval($_POST['remove_order_id']);
+    $stmt = $conn->prepare("UPDATE orders SET is_removed = 1 WHERE id = ?");
+    $stmt->bind_param("i", $order_id);
+    $stmt->execute();
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
 // Handle order submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
     $conn->begin_transaction();

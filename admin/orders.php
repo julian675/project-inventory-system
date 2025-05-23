@@ -12,17 +12,35 @@ if (isset($_SESSION['username'])) {
 }
 
 $conn = new mysqli('localhost', 'root', '', 'ims_db');
-
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// ✅ Handle order removal
+if (isset($_POST['remove_order']) && isset($_POST['remove_order_id'])) {
+    $remove_order_id = intval($_POST['remove_order_id']);
+    try {
+        $stmt = $conn->prepare("UPDATE orders SET is_removed = 1 WHERE id = ?");
+        if (!$stmt) throw new Exception($conn->error);
+        $stmt->bind_param("i", $remove_order_id);
+        $stmt->execute();
+        header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']));
+        exit();
+    } catch (Exception $e) {
+        echo "Failed to remove order: " . $e->getMessage();
+        exit();
+    }
+}
+
+// rest of your existing code continues...
+
+
+// Handle client deletion
 if (isset($_POST['delete_client'])) {
     $delete_client_id = intval($_POST['delete_client_id']);
     $conn->begin_transaction();
 
     try {
-
         $stmt = $conn->prepare("DELETE oi FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.client_id = ?");
         if (!$stmt) throw new Exception($conn->error);
         $stmt->bind_param("i", $delete_client_id);
@@ -39,7 +57,7 @@ if (isset($_POST['delete_client'])) {
         $stmt->execute();
 
         $conn->commit();
-        header("Location: " . $_SERVER['PHP_SELF']);
+        header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']));
         exit();
     } catch (Exception $e) {
         $conn->rollback();
@@ -48,7 +66,7 @@ if (isset($_POST['delete_client'])) {
     }
 }
 
-// Fetch products for dropdown
+// Fetch inventory for dropdown
 $inventory_result = $conn->query("SELECT * FROM inventory");
 $inventory = [];
 while ($row = $inventory_result->fetch_assoc()) {
@@ -70,26 +88,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         $grand_total = 0;
         $order_items = [];
 
-        for ($i = 0; $i < count($_POST['inventory']); $i++) {
-            $product_id = $_POST['inventory'][$i];
-            $quantity = $_POST['quantity'][$i];
+        if (isset($_POST['inventory']) && is_array($_POST['inventory'])) {
+            for ($i = 0; $i < count($_POST['inventory']); $i++) {
+                $product_id = $_POST['inventory'][$i];
+                $quantity = $_POST['quantity'][$i];
 
-            // Get product price
-            $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
-            if (!$stmt) throw new Exception($conn->error);
-            $stmt->bind_param("i", $product_id);
-            $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            $price = $result['price'];
-            $total = $price * $quantity;
-            $grand_total += $total;
+                // Get product price
+                $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
+                if (!$stmt) throw new Exception($conn->error);
+                $stmt->bind_param("i", $product_id);
+                $stmt->execute();
+                $result = $stmt->get_result()->fetch_assoc();
+                $price = $result['price'];
+                $total = $price * $quantity;
+                $grand_total += $total;
 
-            $order_items[] = [
-                'product_id' => $product_id,
-                'quantity' => $quantity,
-                'price' => $price,
-                'total_price' => $total
-            ];
+                $order_items[] = [
+                    'product_id' => $product_id,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'total_price' => $total
+                ];
+            }
+        } else {
+            throw new Exception("No products selected for the order.");
         }
 
         // Insert order
@@ -117,27 +139,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             $stmt->bind_param("iiidd", $order_id, $item['product_id'], $item['quantity'], $item['price'], $item['total_price']);
             $stmt->execute();
 
-          $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
-          if (!$stmt) throw new Exception($conn->error);
-          $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
-          $stmt->execute();
+            // Update inventory
+            $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
+            if (!$stmt) throw new Exception($conn->error);
+            $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
+            $stmt->execute();
 
-          // Now update the status AFTER quantity is updated
-          require_once('utils.php');
-          updateStatus($conn, $item['product_id']);
-
+            // Update product status
+            require_once('utils.php');
+            updateStatus($conn, $item['product_id']);
         }
 
         $conn->commit();
-        header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
+        header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?success=1");
         exit();
     } catch (Exception $e) {
-      $conn->rollback();
-      $error_message = "Failed to place order: " . $e->getMessage();
-
+        $conn->rollback();
+        echo "Failed to place order: " . $e->getMessage();
+        exit();
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -290,28 +313,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
           </thead>
             <tbody>
             <?php
-            $result = $conn->query("
-              SELECT orders.id AS order_id, clients.id AS client_id, clients.name AS client_name, 
-                    orders.order_date, orders.grand_total, orders.status
-              FROM orders
-              JOIN clients ON orders.client_id = clients.id
-              ORDER BY orders.order_date ASC
-            ");
+              $result = $conn->query("
+                SELECT orders.id AS order_id, clients.id AS client_id, clients.name AS client_name, 
+                      orders.order_date, orders.grand_total, orders.status, orders.is_removed
+                FROM orders
+                JOIN clients ON orders.client_id = clients.id
+                ORDER BY orders.order_date ASC
+              ");
               if (!$result) {
                   echo "<tr><td colspan='6'>Error fetching orders: " . $conn->error . "</td></tr>";
               } elseif ($result->num_rows > 0) {
                   while ($row = $result->fetch_assoc()) {
                     ?>
-                    <tr class="clickable-row" data-id="<?= $row['order_id'] ?>" data-client-id="<?= $row['client_id'] ?>">
+                    <tr class="clickable-row <?= $row['is_removed'] ? 'removed-row' : '' ?>" data-id="<?= $row['order_id'] ?>" data-client-id="<?= $row['client_id'] ?>">
                       <td><?= htmlspecialchars($row['order_id']) ?></td>
                       <td><?= htmlspecialchars($row['client_name']) ?></td>
                       <td><?= htmlspecialchars($row['order_date']) ?></td>
                       <td>₱<?= number_format($row['grand_total'], 2) ?></td>
                       <td><?= htmlspecialchars($row['status']) ?></td>
                       <td>
-                        <form method="POST" onsubmit="return confirm('Are you sure you want to delete this client and all related data?');">
-                          <input type="hidden" name="delete_client_id" value="<?= $row['client_id'] ?>">
-                          <button type="submit" name="delete_client">Remove Client</button>
+                        <form method="POST" onsubmit="return confirm('Are you sure you want to mark this client as removed?');">
+                          <input type="hidden" name="remove_order_id" value="<?= $row['order_id'] ?>">
+                          <button type="submit" name="remove_order">Remove</button>
                         </form>
                       </td>
                     </tr>

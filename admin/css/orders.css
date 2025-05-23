@@ -243,6 +243,7 @@ button:hover {
 
 }
 
-.removed-row {
-  background-color: #ffcccc;
-}
+  .removed-row {
+    background-color: #ffcccc !important;
+    opacity: 0.6;
+  }
