@@ -12,8 +12,7 @@ $("#addProductForm").submit(function(e) {
     url: "/project-inventory-system/admin/backend/inventory_backend.php",
     method: "POST",
     data: $(form).serialize() + '&add=true',
-    success: function(response) {
-      // On success, reload items and reset form
+    success: function() {
       loadItems();
       form.reset();
       alert('Product added successfully.');

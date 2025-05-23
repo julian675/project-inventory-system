@@ -4,6 +4,19 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Utility function to update status based on quantity
+function updateStatus($conn, $id) {
+    $conn->query("
+        UPDATE inventory SET status = 
+        CASE 
+            WHEN quantity >= 500 THEN 'Good'
+            WHEN quantity > 200 THEN 'Warning'
+            ELSE 'Critical'
+        END
+        WHERE id = $id
+    ");
+}
+
 // Add product
 if (isset($_POST['add'])) {
     $product = $_POST['product'];
@@ -19,21 +32,21 @@ if (isset($_POST['add'])) {
     $checkStmt->close();
 
     if ($count > 0) {
-        // Product already exists - send 409 Conflict
         http_response_code(409);
         echo json_encode(["error" => "Product already exists"]);
         exit;
     }
 
-    $status = ($quantity >= 500) ? 'good' : (($quantity > 200) ? 'warning' : 'critical');
-
+    // Insert with temporary status (we’ll correct it with updateStatus)
+    $status = 'Pending';
     $stmt = $conn->prepare("INSERT INTO inventory (product, price, quantity, status) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("sdis", $product, $price, $quantity, $status);
     $stmt->execute();
+
+    $id = $stmt->insert_id;
+    updateStatus($conn, $id);
     exit;
 }
-
-
 
 // Delete selected items
 if (isset($_POST['delete_ids'])) {
@@ -50,15 +63,7 @@ if (isset($_POST['update_quantity'])) {
 
     $conn->query("UPDATE inventory SET quantity = GREATEST(quantity + $delta, 0) WHERE id = $id");
 
-    $conn->query("
-        UPDATE inventory SET status = 
-        CASE 
-            WHEN quantity >= 500 THEN 'good'
-            WHEN quantity > 200 THEN 'warning'
-            ELSE 'critical'
-        END
-        WHERE id = $id
-    ");
+    updateStatus($conn, $id);
     exit;
 }
 
@@ -70,7 +75,7 @@ if (isset($_POST['update_price'])) {
     exit;
 }
 
-// Display table
+// Display inventory table rows
 $result = $conn->query("SELECT * FROM inventory");
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -79,13 +84,13 @@ if ($result->num_rows > 0) {
                 <td><input type='checkbox' class='row-checkbox' value='{$row['id']}'></td>
                 <td>{$row['product']}</td>
                 <td>{$row['quantity']}</td>
-                <td><span class='{$statusClass}'></span></td>
+                <td><span class='{$statusClass}' title='{$row['status']}'></span></td>
                 <td>
                     <button class='minus-btn' data-id='{$row['id']}'>−</button>
                     <button class='plus-btn' data-id='{$row['id']}'>+</button>
                 </td>
                 <td><input type='number' step='0.01' class='price-input' data-id='{$row['id']}' value='{$row['price']}'></td>
-              </tr>";
+            </tr>";
     }
 } else {
     echo "<tr><td colspan='6'>No items in stock</td></tr>";

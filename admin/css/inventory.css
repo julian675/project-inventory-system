@@ -65,16 +65,26 @@ body {
 }
 
 
-    .status-pill {
-      display: inline-block;
-      width: 80px;
-      height: 25px;
-      border-radius: 12px;
-    }
+.status-pill {
+  display: inline-block;
+  width: 80px;
+  height: 25px;
+  border-radius: 12px;
+}
 
-    .status-good { background-color: rgb(36, 184, 36); }
-    .status-warning { background-color: rgb(238, 207, 32); }
-    .status-critical { background-color: rgb(214, 42, 42); }
+/* Status colors */
+.status-good {
+  background-color: rgb(36, 184, 36); /* Green */
+}
+
+.status-warning {
+  background-color: rgb(238, 207, 32); /* Yellow */
+}
+
+.status-critical {
+  background-color: rgb(214, 42, 42); /* Red */
+}
+
 
     .plus-btn, .minus-btn {
       padding: 4px 8px;

@@ -10,8 +10,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 // Set username for display
 $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
 
-// Include database connection
+// Include database connection and utility functions
 include 'db.php';
+require_once('utils.php');
 
 // Handle client deletion
 if (isset($_POST['delete_client'])) {
@@ -112,6 +113,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
             $stmt->execute();
+
+            // Update product status after stock change
+            updateStatus($conn, $item['product_id']);
         }
 
         $conn->commit();

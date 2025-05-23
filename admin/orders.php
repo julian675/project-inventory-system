@@ -122,11 +122,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             $stmt->bind_param("iiidd", $order_id, $item['product_id'], $item['quantity'], $item['price'], $item['total_price']);
             $stmt->execute();
 
-            // Update inventory
-            $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
-            if (!$stmt) throw new Exception($conn->error);
-            $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
-            $stmt->execute();
+          $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
+          if (!$stmt) throw new Exception($conn->error);
+          $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
+          $stmt->execute();
+
+          // Now update the status AFTER quantity is updated
+          require_once('utils.php');
+          updateStatus($conn, $item['product_id']);
+
         }
 
         $conn->commit();
@@ -236,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
                   <?php endforeach; ?>
                 </select>
                 <button type="button" onclick="changeQty(this, -1)">−</button>
-                <input type="number" name="quantity[]" value="1" min="1" readonly style="width: 30px; text-align: center;">
+                <input type="number" name="quantity[]" value="1" min="1" style="width: 40px; text-align: center;" oninput="manualQtyChange(this)">
                 <button type="button" onclick="changeQty(this, 1)">+</button>
                 <span>₱<span class="price">0.00</span></span>
               </div>

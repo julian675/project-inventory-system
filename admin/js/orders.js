@@ -23,31 +23,43 @@ function updateUnitPrice(select) {
 }
 
 function changeQty(button, delta) {
-    const input = button.parentNode.querySelector('input[name="quantity[]"]');
-    let qty = parseInt(input.value) + delta;
-    if (qty < 1) qty = 1;
-    input.value = qty;
-
-    const row = button.closest('.product-row');
-    updateRowTotal(row);
-    updateGrandTotal();
+  const input = button.parentNode.querySelector('input[name="quantity[]"]');
+  let current = parseInt(input.value) || 1;
+  current += delta;
+  if (current < 1) current = 1;
+  input.value = current;
+  const productRow = input.closest('.product-row');
+  updateRowTotal(productRow);
+  updateGrandTotal();
 }
 
-function updateRowTotal(row) {
-    const price = parseFloat(row.getAttribute('data-price')) || 0;
-    const qty = parseInt(row.querySelector('input[name="quantity[]"]').value);
-    const total = price * qty;
-    row.querySelector('.price').innerText = total.toFixed(2);
+function manualQtyChange(input) {
+  let value = parseInt(input.value);
+  if (isNaN(value) || value < 1) {
+    input.value = 1;
+    value = 1;
+  }
+  const productRow = input.closest('.product-row');
+  updateRowTotal(productRow);
+  updateGrandTotal();
+}
+
+function updateRowTotal(productRow) {
+  const price = parseFloat(productRow.getAttribute('data-price')) || 0;
+  const quantityInput = productRow.querySelector('input[name="quantity[]"]');
+  const quantity = parseInt(quantityInput.value) || 1;
+  const total = price * quantity;
+  productRow.querySelector('.price').textContent = total.toFixed(2);
 }
 
 function updateGrandTotal() {
-    let total = 0;
-    document.querySelectorAll('.product-row').forEach(row => {
-        const qty = parseInt(row.querySelector('input[name="quantity[]"]').value);
-        const price = parseFloat(row.getAttribute('data-price')) || 0;
-        total += price * qty;
-    });
-    document.getElementById('grandTotal').innerText = total.toFixed(2);
+  const allRows = document.querySelectorAll('.product-row');
+  let grandTotal = 0;
+  allRows.forEach(row => {
+    const rowTotal = parseFloat(row.querySelector('.price').textContent) || 0;
+    grandTotal += rowTotal;
+  });
+  document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
 }
 
 function addProduct() {
