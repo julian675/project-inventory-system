@@ -7,7 +7,7 @@ CREATE TABLE users (
     role ENUM('admin', 'manager') NOT NULL
 );
 
-CREATE TABLE instock (
+CREATE TABLE inventory (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     product VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
@@ -40,6 +40,6 @@ CREATE TABLE order_items (
     price DECIMAL(10, 2),
     total_price DECIMAL(10, 2),
     FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES instock(id)
+    FOREIGN KEY (product_id) REFERENCES inventory(id)
 );
 

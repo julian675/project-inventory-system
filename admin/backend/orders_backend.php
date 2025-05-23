@@ -45,10 +45,10 @@ if (isset($_POST['delete_client'])) {
 }
 
 // Fetch products
-$instock_result = $conn->query("SELECT * FROM instock");
-$instock = [];
-while ($row = $instock_result->fetch_assoc()) {
-    $instock[] = $row;
+$inventory_result = $conn->query("SELECT * FROM inventory");
+$inventory = [];
+while ($row = $inventory_result->fetch_assoc()) {
+    $inventory[] = $row;
 }
 
 // Handle order submission
@@ -65,11 +65,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         $grand_total = 0;
         $order_items = [];
 
-        for ($i = 0; $i < count($_POST['instock']); $i++) {
-            $product_id = $_POST['instock'][$i];
+        for ($i = 0; $i < count($_POST['inventory']); $i++) {
+            $product_id = $_POST['inventory'][$i];
             $quantity = $_POST['quantity'][$i];
 
-            $stmt = $conn->prepare("SELECT price FROM instock WHERE id = ?");
+            $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("i", $product_id);
             $stmt->execute();
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         $order_id = $stmt->insert_id;
 
         foreach ($order_items as $item) {
-            $stmtCheck = $conn->prepare("SELECT quantity FROM instock WHERE id = ?");
+            $stmtCheck = $conn->prepare("SELECT quantity FROM inventory WHERE id = ?");
             if (!$stmtCheck) throw new Exception($conn->error);
             $stmtCheck->bind_param("i", $item['product_id']);
             $stmtCheck->execute();
@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             $stmt->bind_param("iiidd", $order_id, $item['product_id'], $item['quantity'], $item['price'], $item['total_price']);
             $stmt->execute();
 
-            $stmt = $conn->prepare("UPDATE instock SET quantity = quantity - ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
             $stmt->execute();

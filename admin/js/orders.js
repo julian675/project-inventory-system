@@ -1,6 +1,6 @@
 function updateUnitPrice(select) {
     const selectedProductId = select.value;
-    const allSelects = document.querySelectorAll('select[name="instock[]"]');
+    const allSelects = document.querySelectorAll('select[name="inventory[]"]');
     let duplicateFound = false;
 
     allSelects.forEach(sel => {
@@ -57,7 +57,7 @@ function addProduct() {
     clone.querySelector('input[name="quantity[]"]').value = 1;
     clone.querySelector('.price').innerText = "0.00";
     clone.setAttribute('data-price', 0);
-    document.getElementById('instock').appendChild(clone);
+    document.getElementById('inventory').appendChild(clone);
 }
 
 document.addEventListener("DOMContentLoaded", function () {

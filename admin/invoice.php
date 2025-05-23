@@ -74,15 +74,15 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
         <i class="fas fa-chart-line sidebar-icon"></i>
         <div class="menu-label">Dashboard</div> 
     </div>
-    <div class="menu-item" onclick="window.location.href='/project-inventory-system/admin/instock.php'">
+    <div class="menu-item" onclick="window.location.href='/project-inventory-system/admin/inventory.php'">
         <i class="fas fa-boxes sidebar-icon"></i>
-        <div class="menu-label">In Stock</div> 
+        <div class="menu-label">Inventory</div> 
     </div>
     <div class="menu-item" onclick="window.location.href='/project-inventory-system/admin/products.php'">
         <i class="fas fa-tags sidebar-icon"></i>
         <div class="menu-label">Products</div> 
     </div>
-    <div class="menu-item">
+    <div class="menu-item" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
         <i class="fas fa-receipt sidebar-icon"></i>
         <div class="menu-label">Orders</div>
     </div>
@@ -90,7 +90,7 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
         <i class="fas fa-users sidebar-icon"></i>
         <div class="menu-label">Users</div>
     </div>
-    <div class="menu-item" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
+    <div class="menu-item">
         <i class="fas fa-file-invoice sidebar-icon"></i>
         <div class="menu-label">Invoice</div>
     </div>
@@ -140,7 +140,7 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
                     $items_sql = "
                         SELECT oi.quantity, oi.price, oi.total_price, p.product AS product_name
                         FROM order_items oi
-                        JOIN instock p ON oi.product_id = p.id
+                        JOIN inventory p ON oi.product_id = p.id
                         WHERE oi.order_id = {$order['order_id']}
                     ";
                     $items_result = $conn->query($items_sql);

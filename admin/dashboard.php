@@ -34,10 +34,10 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 $productSales = [];
 
-// Fetch products in stock
+// Fetch all products for pie chart
 $sql = "
     SELECT product, quantity 
-    FROM instock
+    FROM inventory
 ";
 
 $result = mysqli_query($conn, $sql);
@@ -49,10 +49,31 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
+// Fetch top 3 sold products for table
+$topSoldProducts = [];
+
+$sql = "
+    SELECT i.product, SUM(oi.quantity) AS total_sold
+    FROM order_items oi
+    JOIN inventory i ON oi.product_id = i.id
+    GROUP BY i.id, i.product
+    ORDER BY total_sold DESC
+    LIMIT 3
+";
+
+$result = mysqli_query($conn, $sql);
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $topSoldProducts[] = [
+        'product' => $row['product'],
+        'quantity' => $row['total_sold']
+    ];
+}
+
 // ✅ Get critical stock for stock alert
 $stockAlerts = [];
 
-$sql = "SELECT product, quantity, status FROM instock WHERE status = 'critical'";
+$sql = "SELECT product, quantity, status FROM inventory WHERE status = 'critical'";
 $result = mysqli_query($conn, $sql);
 
 while ($row = mysqli_fetch_assoc($result)) {
@@ -108,9 +129,9 @@ while ($row = mysqli_fetch_assoc($result)) {
     <i class="fas fa-chart-line sidebar-icon"></i>
     <div class="menu-label">Dashboard</div> 
   </div>
-  <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/admin/instock.php'">
+  <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/admin/inventory.php'">
     <i class="fas fa-boxes sidebar-icon"></i>
-    <div class="menu-label">In Stock</div> 
+    <div class="menu-label">Inventory</div> 
   </div>
   <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
     <i class="fas fa-tags sidebar-icon"></i>
@@ -172,8 +193,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     </div>
 
     <div class="table-card">
-      <h4>Sold Products</h4>
-      <?php if (count($productSales) > 0): ?>
+      <h4>Top 3 Sold Products</h4>
+      <?php if (count($topSoldProducts) > 0): ?>
       <table>
         <thead>
           <tr>
@@ -182,7 +203,7 @@ while ($row = mysqli_fetch_assoc($result)) {
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($productSales as $product): ?>
+          <?php foreach ($topSoldProducts as $product): ?>
             <tr>
               <td><?= htmlspecialchars($product['product']) ?></td>
               <td><?= $product['quantity'] ?></td>
@@ -242,7 +263,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
     const pieCtx = document.getElementById('pieChart').getContext('2d');
     const pieLabels = productSales.map(p => p.product);
-    const pieData = productSales.map(p => p.quantity);  // Now using the quantity in stock
+    const pieData = productSales.map(p => p.quantity);
 
     new Chart(pieCtx, {
       type: 'pie',
@@ -251,7 +272,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         datasets: [{
           label: 'Product Stock',
           data: pieData,
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF9F40', '#4BC0C0'],
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF9F40', '#4BC0C0', '#9966FF', '#C9CBCF'],
           borderColor: '#fff',
           borderWidth: 1
         }]
@@ -276,4 +297,3 @@ while ($row = mysqli_fetch_assoc($result)) {
 <script src="/project-inventory-system/js/header.js"></script>
 </body>
 </html>
-  

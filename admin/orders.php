@@ -54,10 +54,10 @@ if (isset($_POST['delete_client'])) {
 }
 
 // Fetch products for dropdown
-$instock_result = $conn->query("SELECT * FROM instock");
-$instock = [];
-while ($row = $instock_result->fetch_assoc()) {
-    $instock[] = $row;
+$inventory_result = $conn->query("SELECT * FROM inventory");
+$inventory = [];
+while ($row = $inventory_result->fetch_assoc()) {
+    $inventory[] = $row;
 }
 
 // Handle new order submission
@@ -75,12 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         $grand_total = 0;
         $order_items = [];
 
-        for ($i = 0; $i < count($_POST['instock']); $i++) {
-            $product_id = $_POST['instock'][$i];
+        for ($i = 0; $i < count($_POST['inventory']); $i++) {
+            $product_id = $_POST['inventory'][$i];
             $quantity = $_POST['quantity'][$i];
 
             // Get product price
-            $stmt = $conn->prepare("SELECT price FROM instock WHERE id = ?");
+            $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("i", $product_id);
             $stmt->execute();
@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
 
         foreach ($order_items as $item) {
             // Check stock availability
-            $stmtCheck = $conn->prepare("SELECT quantity FROM instock WHERE id = ?");
+            $stmtCheck = $conn->prepare("SELECT quantity FROM inventory WHERE id = ?");
             if (!$stmtCheck) throw new Exception($conn->error);
             $stmtCheck->bind_param("i", $item['product_id']);
             $stmtCheck->execute();
@@ -123,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             $stmt->execute();
 
             // Update inventory
-            $stmt = $conn->prepare("UPDATE instock SET quantity = quantity - ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
             $stmt->execute();
@@ -183,9 +183,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
-        <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/admin/instock.php'">
+        <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/admin/inventory.php'">
             <i class="fas fa-boxes sidebar-icon"></i>
-            <div class="menu-label">In Stock</div> 
+            <div class="menu-label">Inventory</div> 
         </div>
         <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
             <i class="fas fa-tags sidebar-icon"></i>
@@ -223,13 +223,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             <label>Company Name: <input type="text" name="company"></label>
           </div>
 
-          <div class="form-section instock">
+          <div class="form-section inventory">
             <h3>Products</h3>
-            <div class="scroll-box" id="instock">
+            <div class="scroll-box" id="inventory">
               <div class="product-row" data-price="0">
-                <select name="instock[]" onchange="updateUnitPrice(this)">
+                <select name="inventory[]" onchange="updateUnitPrice(this)">
                   <option value="" disabled selected>Select Product</option>
-                  <?php foreach ($instock as $product): ?>
+                  <?php foreach ($inventory as $product): ?>
                     <option value="<?= $product['id'] ?>" data-price="<?= $product['price'] ?>">
                       <?= htmlspecialchars($product['product']) ?> - ₱<?= $product['price'] ?>
                     </option>

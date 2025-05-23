@@ -71,9 +71,9 @@ $result = $conn->query($sql);
     <i class="fas fa-chart-line sidebar-icon"></i>
     <div class="menu-label">Dashboard</div> 
   </div>
-  <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/admin/instock.php'">
+  <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/admin/inventory.php'">
       <i class="fas fa-boxes sidebar-icon"></i>
-      <div class="menu-label">In Stock</div> 
+      <div class="menu-label">Inventory</div> 
   </div>
   <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
       <i class="fas fa-tags sidebar-icon"></i>
