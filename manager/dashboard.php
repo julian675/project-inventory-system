@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'manager') {
-    header("Location: admin/login.php");
+    header("Location: project-inventory-system/login.php");
     exit;
 }
 
@@ -11,7 +11,7 @@ if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
 
-include 'db_connection.php'; // Ensure this connects to `ims_db`
+include 'db_connection.php'; 
 
 $orderData = [];
 
@@ -34,10 +34,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 $productSales = [];
 
-// Fetch products in stock
 $sql = "
     SELECT product, quantity 
-    FROM instock
+    FROM inventory
 ";
 
 $result = mysqli_query($conn, $sql);
@@ -49,10 +48,29 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
-// ✅ Get critical stock for stock alert
+$topSoldProducts = [];
+
+$sql = "
+    SELECT i.product, SUM(oi.quantity) AS total_sold
+    FROM order_items oi
+    JOIN inventory i ON oi.product_id = i.id
+    GROUP BY i.id, i.product
+    ORDER BY total_sold DESC
+    LIMIT 3
+";
+
+$result = mysqli_query($conn, $sql);
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $topSoldProducts[] = [
+        'product' => $row['product'],
+        'quantity' => $row['total_sold']
+    ];
+}
+
 $stockAlerts = [];
 
-$sql = "SELECT product, quantity, status FROM instock WHERE status = 'critical'";
+$sql = "SELECT product, quantity, status FROM inventory WHERE status = 'critical'";
 $result = mysqli_query($conn, $sql);
 
 while ($row = mysqli_fetch_assoc($result)) {
@@ -78,7 +96,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
   <div class="left-icon">
     <i class="fas fa-bars"></i>
@@ -102,15 +119,14 @@ while ($row = mysqli_fetch_assoc($result)) {
     <?php endif; ?>
 </div>
 
-<!-- Sidebar -->
 <div class="sidebar">
   <div class="menu-item dashboard">
     <i class="fas fa-chart-line sidebar-icon"></i>
     <div class="menu-label">Dashboard</div> 
   </div>
-  <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/manager/instock.php'">
+  <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/manager/inventory.php'">
     <i class="fas fa-boxes sidebar-icon"></i>
-    <div class="menu-label">In Stock</div> 
+    <div class="menu-label">Inventory</div> 
   </div>
   <div class="menu-item products" onclick="window.location.href='/project-inventory-system/manager/products.php'">
     <i class="fas fa-tags sidebar-icon"></i>
@@ -126,7 +142,6 @@ while ($row = mysqli_fetch_assoc($result)) {
   </div>
 </div>
 
-<!-- Main Content -->
 <div class="main">
   <div class="chart-grid-2">
     <div class="chart-box">
@@ -134,12 +149,12 @@ while ($row = mysqli_fetch_assoc($result)) {
         <canvas id="lineChart"></canvas>
       </div>
     </div>
-    <div class="chart-box">
+    <div class="chart-box pie-chart-box">
+      <h3 class="pie-chart-title">Product Quantity</h3>
       <canvas id="pieChart"></canvas>
     </div>
   </div>
 
-  <!-- ✅ Stock Report Section -->
   <div class="card-grid-2">
     <div class="table-card">
       <h4>Stock Alert</h4>
@@ -168,8 +183,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     </div>
 
     <div class="table-card">
-      <h4>Sold Products</h4>
-      <?php if (count($productSales) > 0): ?>
+      <h4>Top 3 Sold Products</h4>
+      <?php if (count($topSoldProducts) > 0): ?>
       <table>
         <thead>
           <tr>
@@ -178,7 +193,7 @@ while ($row = mysqli_fetch_assoc($result)) {
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($productSales as $product): ?>
+          <?php foreach ($topSoldProducts as $product): ?>
             <tr>
               <td><?= htmlspecialchars($product['product']) ?></td>
               <td><?= $product['quantity'] ?></td>
@@ -238,7 +253,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
     const pieCtx = document.getElementById('pieChart').getContext('2d');
     const pieLabels = productSales.map(p => p.product);
-    const pieData = productSales.map(p => p.quantity);  // Now using the quantity in stock
+    const pieData = productSales.map(p => p.quantity);
 
     new Chart(pieCtx, {
       type: 'pie',
@@ -247,7 +262,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         datasets: [{
           label: 'Product Stock',
           data: pieData,
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF9F40', '#4BC0C0'],
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF9F40', '#4BC0C0', '#9966FF', '#C9CBCF'],
           borderColor: '#fff',
           borderWidth: 1
         }]

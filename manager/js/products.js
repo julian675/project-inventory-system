@@ -4,6 +4,10 @@ document.getElementById('searchInput').addEventListener('keyup', function () {
 
   rows.forEach(row => {
     const productName = row.cells[0]?.textContent.toLowerCase();
-    row.style.display = (productName && productName.includes(filter)) ? '' : 'none';
+    if (productName && productName.includes(filter)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
   });
 });

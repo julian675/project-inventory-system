@@ -19,7 +19,6 @@ function updateUnitPrice(select) {
     const price = parseFloat(select.selectedOptions[0].getAttribute('data-price'));
     productRow.setAttribute('data-price', price);
 
-    // 🔽 Set quantity to 1 if it is 0 or empty
     const quantityInput = productRow.querySelector('input[name="quantity[]"]');
     if (!quantityInput.value || parseInt(quantityInput.value) === 0) {
         quantityInput.value = 1;
@@ -85,7 +84,16 @@ function addProduct() {
     document.getElementById('inventory').appendChild(clone);
 }
 
-
+function removeProductRow(button) {
+    const rows = document.querySelectorAll('.product-row');
+    if (rows.length > 1) {
+        const row = button.closest('.product-row');
+        row.remove();
+        updateGrandTotal();
+    } else {
+        alert("At least one product must remain.");
+    }
+}
 
 function cleanEmptyProductRows() {
     const rows = document.querySelectorAll('.product-row');
@@ -116,14 +124,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!notification) return;
 
     function hideNotification() {
-      notification.style.opacity = '0';             // start fade out
-      setTimeout(() => notification.remove(), 500); // remove from DOM after fade
+      notification.style.opacity = '0';           
+      setTimeout(() => notification.remove(), 500);
     }
 
-    // Auto-hide after 1.5 seconds
     const timer = setTimeout(hideNotification, 1500);
 
-    // Hide immediately on any click, cancel timer
+
     document.addEventListener('click', () => {
       clearTimeout(timer);
       hideNotification();

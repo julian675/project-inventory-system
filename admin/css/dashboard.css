@@ -79,7 +79,6 @@ body {
   height: auto;
 }
 
-/* ✅ NEW: Fix for long product names */
 .table-card table td {
   white-space: normal;
   word-break: break-word;

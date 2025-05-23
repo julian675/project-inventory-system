@@ -143,7 +143,8 @@ $("#deleteSelected").click(function() {
 
   if (ids.length === 0) return alert("Select at least one item.");
 
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { delete_ids: ids }, loadItems);
+  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { delete_ids: ids })
+  .done(loadItems);
 });
 
 $(document).on('click', '.plus-btn', function() {

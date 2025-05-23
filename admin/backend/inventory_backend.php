@@ -4,7 +4,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Utility function to update status based on quantity
 function updateStatus($conn, $id) {
     $conn->query("
         UPDATE inventory SET status = 
@@ -17,13 +16,11 @@ function updateStatus($conn, $id) {
     ");
 }
 
-// Add product
 if (isset($_POST['add'])) {
     $product = $_POST['product'];
     $quantity = (int)$_POST['quantity'];
     $price = (float)$_POST['price'];
 
-    // Check if product already exists
     $checkStmt = $conn->prepare("SELECT COUNT(*) FROM inventory WHERE product = ?");
     $checkStmt->bind_param("s", $product);
     $checkStmt->execute();
@@ -37,7 +34,6 @@ if (isset($_POST['add'])) {
         exit;
     }
 
-    // Insert with temporary status (we’ll correct it with updateStatus)
     $status = 'Pending';
     $stmt = $conn->prepare("INSERT INTO inventory (product, price, quantity, status) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("sdis", $product, $price, $quantity, $status);
@@ -48,7 +44,6 @@ if (isset($_POST['add'])) {
     exit;
 }
 
-// Delete selected items
 if (isset($_POST['delete_ids'])) {
     foreach ($_POST['delete_ids'] as $id) {
         $conn->query("DELETE FROM inventory WHERE id = " . (int)$id);
@@ -56,7 +51,6 @@ if (isset($_POST['delete_ids'])) {
     exit;
 }
 
-// Update quantity
 if (isset($_POST['update_quantity'])) {
     $id = (int) $_POST['id'];
     $delta = (int) $_POST['delta'];
@@ -66,8 +60,6 @@ if (isset($_POST['update_quantity'])) {
     updateStatus($conn, $id);
     exit;
 }
-
-// Update price
 if (isset($_POST['update_price'])) {
     $id = (int) $_POST['id'];
     $price = (float) $_POST['price'];
@@ -75,7 +67,6 @@ if (isset($_POST['update_price'])) {
     exit;
 }
 
-// Display inventory table rows
 $result = $conn->query("SELECT * FROM inventory");
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {

@@ -1,38 +1,20 @@
 <?php
-session_start();
-
-// Block access if not logged in or not admin
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: admin/login.php");
-    exit;
-}
-
-// Set username for display
-$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
-
-// Include database connection and utility functions
-include 'db.php';
-require_once('utils.php');
-
-// Handle client deletion
-if (isset($_POST['delete_client'])) {
-    $delete_client_id = intval($_POST['delete_client_id']);
+function deleteClient($conn, $client_id) {
     $conn->begin_transaction();
-
     try {
         $stmt = $conn->prepare("DELETE oi FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.client_id = ?");
         if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
+        $stmt->bind_param("i", $client_id);
         $stmt->execute();
 
         $stmt = $conn->prepare("DELETE FROM orders WHERE client_id = ?");
         if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
+        $stmt->bind_param("i", $client_id);
         $stmt->execute();
 
         $stmt = $conn->prepare("DELETE FROM clients WHERE id = ?");
         if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
+        $stmt->bind_param("i", $client_id);
         $stmt->execute();
 
         $conn->commit();
@@ -45,43 +27,22 @@ if (isset($_POST['delete_client'])) {
     }
 }
 
-// ✅ Handle order soft-deletion
-if (isset($_POST['remove_order'])) {
-    $remove_order_id = intval($_POST['remove_order_id']);
-    $stmt = $conn->prepare("UPDATE orders SET is_removed = 1 WHERE id = ?");
-    if ($stmt) {
-        $stmt->bind_param("i", $remove_order_id);
-        $stmt->execute();
-        $stmt->close();
-    }
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
-}
-
-// Fetch products
-$inventory_result = $conn->query("SELECT * FROM inventory");
-$inventory = [];
-while ($row = $inventory_result->fetch_assoc()) {
-    $inventory[] = $row;
-}
-
-// Handle order submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client']) && !isset($_POST['remove_order'])) {
+function placeOrder($conn, $postData) {
+    require_once('utils.php');
     $conn->begin_transaction();
-
     try {
         $stmt = $conn->prepare("INSERT INTO clients (name, address, contact_number, company_name) VALUES (?, ?, ?, ?)");
         if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("ssss", $_POST['name'], $_POST['address'], $_POST['contact'], $_POST['company']);
+        $stmt->bind_param("ssss", $postData['name'], $postData['address'], $postData['contact'], $postData['company']);
         $stmt->execute();
         $client_id = $stmt->insert_id;
 
         $grand_total = 0;
         $order_items = [];
 
-        for ($i = 0; $i < count($_POST['inventory']); $i++) {
-            $product_id = $_POST['inventory'][$i];
-            $quantity = $_POST['quantity'][$i];
+        for ($i = 0; $i < count($postData['inventory']); $i++) {
+            $product_id = $postData['inventory'][$i];
+            $quantity = $postData['quantity'][$i];
 
             $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
@@ -127,7 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client']) && !
             $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
             $stmt->execute();
 
-            // Update product status after stock change
             updateStatus($conn, $item['product_id']);
         }
 
@@ -140,4 +100,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client']) && !
         exit();
     }
 }
-?>
+
+function getInventory($conn) {
+    $result = $conn->query("SELECT * FROM inventory");
+    $inventory = [];
+    while ($row = $result->fetch_assoc()) {
+        $inventory[] = $row;
+    }
+    return $inventory;
+} 

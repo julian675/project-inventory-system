@@ -1,16 +1,13 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'manager') {
-    header("Location: admin/login.php");
+    header("Location: manager/login.php");
     exit;
 }
 
-// Set username for display
 $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
 
-// Database connection
 $host = "localhost";
 $user = "root";
 $password = "";
@@ -22,8 +19,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Run the query to fetch inventory data
-$sql = "SELECT product, price FROM instock";
+$sql = "SELECT product, price FROM inventory";
 $result = $conn->query($sql);
 ?>
 
@@ -72,9 +68,9 @@ $result = $conn->query($sql);
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
-        <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/manager/instock.php'">
+        <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/manager/inventory.php'">
             <i class="fas fa-boxes sidebar-icon"></i>
-            <div class="menu-label">In Stock</div> 
+            <div class="menu-label">Inventory</div> 
         </div>
         <div class="menu-item products">
             <i class="fas fa-tags sidebar-icon"></i>
@@ -101,7 +97,6 @@ $result = $conn->query($sql);
         <input type="text" id="searchInput" placeholder="Search products..." class="search-option">
         <i class="fa fa-search search-icon"></i>
       </div>
-          <!-- In Stock Table -->
           <table border="1" cellpadding="6" class="products-table">
               <thead>
                   <tr>

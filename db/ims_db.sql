@@ -29,10 +29,8 @@ CREATE TABLE orders (
     order_date DATETIME,
     grand_total DECIMAL(10,2), 
     status ENUM('pending', 'completed', 'canceled') DEFAULT 'pending',
-    is_removed TINYINT(1) NOT NULL DEFAULT 0,
-    FOREIGN KEY (client_id) REFERENCES clients(id)
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
 );
-
 
 CREATE TABLE order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,7 +39,6 @@ CREATE TABLE order_items (
     quantity INT,
     price DECIMAL(10, 2),
     total_price DECIMAL(10, 2),
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES inventory(id)
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES inventory(id) ON DELETE CASCADE
 );
-

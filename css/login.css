@@ -13,7 +13,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ffffff;
-  z-index: 1; /* Changed from 0 to 1 */
+  z-index: 1; 
   padding: 20px;
   box-sizing: border-box;
   border-radius: 5px;
@@ -27,7 +27,7 @@ body {
 .left-content {
   flex: 1;
   padding-right: 20px;
-  margin-top: 20px;  /* Adds space between top and content */
+  margin-top: 20px; 
 }
 
 .right-content {
@@ -38,15 +38,15 @@ body {
 }
 
 .right-content img {
-  width: 600px;      /* Fixed width */
-  height: 350px;     /* Fixed height */
-  object-fit: cover; /* Ensures the image fills the container without distortion */
+  width: 600px;    
+  height: 350px;     
+  object-fit: cover; 
   margin-top: 40px; 
 }
 
 
 .header-text {
-  margin-top: 50px; /* Pushes just the h4 and subtitle down a bit */
+  margin-top: 50px; 
 }
 
 h4 {
@@ -63,7 +63,7 @@ h4 {
 }
 
 .form-section {
-  margin-top: 80px; /* Controls spacing between header and the rest */
+  margin-top: 80px; 
 }
 
 .input-group-custom input {

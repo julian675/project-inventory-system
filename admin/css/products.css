@@ -8,8 +8,8 @@ position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
-  width: 80px;               /* Keeping your original width */
-  background-color: #5C88B2; /* Keeping your original color */
+  width: 80px;             
+  background-color: #5C88B2; 
   font-size: 11px;
   text-align: center;
   display: flex;
@@ -20,7 +20,7 @@ position: fixed;
     }
  .main {
   margin-left: 80px;
-  margin-top: 30px; /* So content doesn't go under header */
+  margin-top: 30px;
   padding: 20px;
 }
 
@@ -36,7 +36,7 @@ position: fixed;
 }
 
 .menu-item:hover {
-  background-color: #4a6e91; /* Slightly darker shade on hover */
+  background-color: #4a6e91; 
 }
 
 .sidebar-icon {
@@ -62,7 +62,7 @@ position: fixed;
   flex: 1;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   font-size: 14px;
-  min-height: 700px; /* or whatever base height you want */
+  min-height: 700px; 
 }
 
 .products-table {
@@ -71,10 +71,10 @@ position: fixed;
   font-family: Arial, sans-serif;
   font-size: 18px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  border-radius: 12px; /* Rounded corners */
-  overflow: hidden; /* Ensures content inside doesn't overflow the rounded edges */
-  border-collapse: separate; /* Needed for border-radius to apply */
-  border-spacing: 0; /* Remove space between cells */
+  border-radius: 12px; 
+  overflow: hidden; 
+  border-collapse: separate;
+  border-spacing: 0; 
 }
 
 .products-table th,
@@ -84,26 +84,22 @@ position: fixed;
   height: 60px;
 }
 
-/* Header */
 .products-table thead th {
   background-color: #e0e0e0;
   font-weight: bold;
   color: #000;
 }
 
-/* Left column (Product) */
 .products-table td:nth-child(1) {
   background-color: #ffffff;
   color: #000;
 }
 
-/* Right column (Price) */
 .products-table td:nth-child(2) {
   background-color: #cceeff;
   color: #000;
 }
 
-/* Column widths */
 .products-table th.product-class,
 .products-table td.product-class {
   width: 80%;
@@ -131,7 +127,7 @@ position: fixed;
 
 .search-option {
   width: 100%;
-  padding: 8px 35px 8px 10px; /* space for the icon on the right */
+  padding: 8px 35px 8px 10px; 
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 16px;
@@ -139,10 +135,10 @@ position: fixed;
 
 .search-icon {
   position: absolute;
-  right: -70px; /* Adjust as needed */
+  right: -70px; 
   top: 50%;
   transform: translateY(-50%);
   color: #888;
   pointer-events: none;
-  font-size: 20px; /* Increase this value for larger icon */
+  font-size: 20px; 
 }

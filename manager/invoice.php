@@ -1,19 +1,16 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'manager') {
     header("Location: admin/login.php");
     exit;
 }
 
-// Set username for display
 $username = 'Guest';
 if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
 
-// Database connection
 $host = "localhost";
 $username_db = "root";
 $password = "";
@@ -45,7 +42,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
     <div class="left-icon"><i class="fas fa-bars"></i></div>
     <div class="right-contents">
@@ -59,7 +55,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     </div>
 </div>
 
-<!-- Dropdown -->
 <div id="login-dropdown" class="dropdown-box">
     <?php if (isset($_SESSION['username'])): ?>
         <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
@@ -68,15 +63,14 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     <?php endif; ?>
 </div>
 
-<!-- Sidebar -->
 <div class="sidebar">
     <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/dashboard.php'">
         <i class="fas fa-chart-line sidebar-icon"></i>
         <div class="menu-label">Dashboard</div> 
     </div>
-    <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/instock.php'">
+    <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/inventory.php'">
         <i class="fas fa-boxes sidebar-icon"></i>
-        <div class="menu-label">In Stock</div> 
+        <div class="menu-label">Inventory</div> 
     </div>
     <div class="menu-item" onclick="window.location.href='/project-inventory-system/manager/products.php'">
         <i class="fas fa-tags sidebar-icon"></i>
@@ -92,7 +86,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     </div>
 </div>
 
-<!-- Client Sidebar -->
 <div class="client-sidebar">
     <h2>Clients</h2>
     <?php
@@ -106,7 +99,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     ?>
 </div>
 
-<!-- Main Content -->
 <div class="main-content">
     <?php if ($selected_client_id): ?>
         <h2>Order Details</h2>
@@ -136,7 +128,7 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
                     $items_sql = "
                         SELECT oi.quantity, oi.price, oi.total_price, p.product AS product_name
                         FROM order_items oi
-                        JOIN instock p ON oi.product_id = p.id
+                        JOIN inventory p ON oi.product_id = p.id
                         WHERE oi.order_id = {$order['order_id']}
                     ";
                     $items_result = $conn->query($items_sql);

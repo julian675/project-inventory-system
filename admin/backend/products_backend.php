@@ -5,7 +5,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch product and price only
 $result = $conn->query("SELECT product, price FROM inventory");
 
 if ($result && $result->num_rows > 0) {

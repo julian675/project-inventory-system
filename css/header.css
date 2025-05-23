@@ -1,4 +1,4 @@
-/* The header remains at the top and does not scroll */
+
 .header {
   position: fixed;
   left: 0;
@@ -13,7 +13,7 @@
   z-index: 10;
 }
 
-/* Ensure the left icon is positioned correctly */
+
 .left-icon {
   font-size: 25px;
   color: rgb(0, 0, 0);
@@ -22,7 +22,7 @@
   margin-left: 25px;
 }
 
-/* The right contents, including the dropdown and login button, are in a flex container */
+
 .right-contents {
   font-size: 25px;
   color: rgb(0, 0, 0);
@@ -34,17 +34,17 @@
   justify-content: center;
 }
 
-/* User info block (part of right contents) */
+
 .user-info {
   color: rgb(2, 2, 2);
   z-index: 10;
   font-family: 'Poppins', sans-serif;
 }
 
-/* The dropdown box, positioned below the header */
+
 .dropdown-box {
   position: fixed;
-  top: 80px; /* stays below fixed header */
+  top: 80px; 
   right: 15px;
   width: 200px;
   height: auto;
@@ -54,10 +54,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  display: none; /* Hidden by default */
+  display: none; 
 }
 
-/* Style for the login button */
 .login-button {
   display: inline-block;
   padding: 12px 24px;
@@ -68,19 +67,18 @@
   border-radius: 8px;
   transition: background-color 0.3s ease;
   text-align: center;
-  width: 100%;        /* take full width of dropdown */
-  box-sizing: border-box;  /* include padding in width */
-  margin: 15px 0 0 0; /* space from top, no left margin */
+  width: 100%;      
+  box-sizing: border-box;  
+  margin: 15px 0 0 0; 
   cursor: pointer;
 }
 
 
-/* Hover effect for the login button */
 .login-button:hover {
   background-color: #3b78c3;
 }
 
-/* Ensuring the dropdown box is initially hidden, only shown when required */
+
 .dropdown-box {
   display: none;
 }

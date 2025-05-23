@@ -5,7 +5,6 @@
     dropdown.style.display = isVisible ? 'none' : 'block';
   }
 
-  // Hide dropdown if clicked outside
   document.addEventListener('click', function(event) {
     const dropdown = document.getElementById('login-dropdown');
     const caret = document.querySelector('.fa-caret-down');

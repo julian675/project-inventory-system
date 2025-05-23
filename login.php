@@ -12,7 +12,7 @@ if ($conn->connect_error) {
 }
 
 $message = '';
-$alertType = 'success'; // Default alert type
+$alertType = 'success'; 
 
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $uname = trim($_POST['uname']);
     $password = $_POST['password'];
 
-    // ✅ Updated to include role
     $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE uname = ?");
     if ($stmt) {
         $stmt->bind_param("s", $uname);
@@ -41,11 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['message'] = "✅ Login successful!";
                 $_SESSION['alert_type'] = 'success';
 
-                // ✅ Redirect based on role
                 if ($user['role'] === 'admin') {
                     header("Location: admin/dashboard.php");
                 } else {
-                    header("Location: manager/dashboard.php"); // Fallback
+                    header("Location: manager/dashboard.php"); 
                 }
                 exit;
             } else {
@@ -63,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['alert_type'] = 'danger';
     }
 
-    // Reload login page on error
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -88,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        // Auto-hide after 2 seconds (2000 ms)
         setTimeout(function () {
             var alertBox = document.getElementById('alert-message');
             if (alertBox) {
@@ -96,7 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }, 2000);
 
-        // Optional: Dismiss on click
         document.addEventListener('click', function () {
             var alertBox = document.getElementById('alert-message');
             if (alertBox) {

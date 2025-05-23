@@ -1,47 +1,48 @@
 <?php
-session_start();
-// Include database connection
-include 'db.php';
-
-// Fetch products
-$inventory = $conn->query("SELECT * FROM inventory");
-$inventory = [];
-while ($row = $inventory_result->fetch_assoc()) {
-    $inventory[] = $row;
-}
-
-if (isset($_POST['remove_order'])) {
-    $order_id = intval($_POST['remove_order_id']);
-    $stmt = $conn->prepare("UPDATE orders SET is_removed = 1 WHERE id = ?");
-    $stmt->bind_param("i", $order_id);
-    $stmt->execute();
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
-}
-
-// Handle order submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
+function deleteClient($conn, $client_id) {
     $conn->begin_transaction();
-
     try {
-        $name = htmlspecialchars(trim($_POST['name']));
-        $address = htmlspecialchars(trim($_POST['address']));
-        $contact = htmlspecialchars(trim($_POST['contact']));
-        $company = htmlspecialchars(trim($_POST['company']));
+        $stmt = $conn->prepare("DELETE oi FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.client_id = ?");
+        if (!$stmt) throw new Exception($conn->error);
+        $stmt->bind_param("i", $client_id);
+        $stmt->execute();
 
+        $stmt = $conn->prepare("DELETE FROM orders WHERE client_id = ?");
+        if (!$stmt) throw new Exception($conn->error);
+        $stmt->bind_param("i", $client_id);
+        $stmt->execute();
+
+        $stmt = $conn->prepare("DELETE FROM clients WHERE id = ?");
+        if (!$stmt) throw new Exception($conn->error);
+        $stmt->bind_param("i", $client_id);
+        $stmt->execute();
+
+        $conn->commit();
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } catch (Exception $e) {
+        $conn->rollback();
+        echo "Failed to delete client: " . $e->getMessage();
+        exit();
+    }
+}
+
+function placeOrder($conn, $postData) {
+    require_once('utils.php');
+    $conn->begin_transaction();
+    try {
         $stmt = $conn->prepare("INSERT INTO clients (name, address, contact_number, company_name) VALUES (?, ?, ?, ?)");
         if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("ssss", $name, $address, $contact, $company);
-
+        $stmt->bind_param("ssss", $postData['name'], $postData['address'], $postData['contact'], $postData['company']);
         $stmt->execute();
         $client_id = $stmt->insert_id;
 
         $grand_total = 0;
         $order_items = [];
 
-        for ($i = 0; $i < count($_POST['inventory']); $i++) {
-            $product_id = $_POST['inventory'][$i];
-            $quantity = $_POST['quantity'][$i];
+        for ($i = 0; $i < count($postData['inventory']); $i++) {
+            $product_id = $postData['inventory'][$i];
+            $quantity = $postData['quantity'][$i];
 
             $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
@@ -87,7 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
             $stmt->execute();
 
-            require_once('utils.php');
             updateStatus($conn, $item['product_id']);
         }
 
@@ -96,10 +96,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         exit();
     } catch (Exception $e) {
         $conn->rollback();
-        error_log("Order placement error: " . $e->getMessage());  // logs to server
-        echo "Failed to place order. Please try again later.";
-
+        echo "Failed to place order: " . $e->getMessage();
         exit();
     }
 }
-?>
+
+function getInventory($conn) {
+    $result = $conn->query("SELECT * FROM inventory");
+    $inventory = [];
+    while ($row = $result->fetch_assoc()) {
+        $inventory[] = $row;
+    }
+    return $inventory;
+} 

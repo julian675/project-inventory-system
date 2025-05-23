@@ -12,7 +12,7 @@ if ($conn->connect_error) {
 }
 
 $message = '';
-$alertType = 'success'; // Default to success
+$alertType = 'success'; 
 
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
@@ -76,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        // Auto-dismiss after 2 seconds
         setTimeout(function () {
             var alertBox = document.getElementById('alert-message');
             if (alertBox) {
@@ -84,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }, 2000);
 
-        // Optional: Dismiss on click
         document.addEventListener('click', function () {
             var alertBox = document.getElementById('alert-message');
             if (alertBox) {

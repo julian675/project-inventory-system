@@ -101,7 +101,6 @@ $result = $conn->query($sql);
         <input type="text" id="searchInput" placeholder="Search products..." class="search-option">
         <i class="fa fa-search search-icon"></i>
       </div>
-      
           <table border="1" cellpadding="6" class="products-table">
               <thead>
                   <tr>

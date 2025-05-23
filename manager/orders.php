@@ -1,144 +1,26 @@
 <?php
 session_start();
-
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'manager') {
-    header("Location: admin/login.php");
+    header("Location: manager/login.php");
     exit;
 }
 
-// Set username for display
-$username = 'Guest';
-if (isset($_SESSION['username'])) {
-    $username = htmlspecialchars($_SESSION['username']);
-}
+$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
+require_once('db_connection.php');
+require_once('backend/orders_backend.php');
 
-$conn = new mysqli('localhost', 'root', '', 'ims_db');
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Handle client deletion
-if (isset($_POST['delete_client'])) {
-    $delete_client_id = intval($_POST['delete_client_id']);
-    $conn->begin_transaction();
-
-    try {
-        // Delete order_items linked to this client via orders
-        $stmt = $conn->prepare("DELETE oi FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.client_id = ?");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
-        $stmt->execute();
-
-        // Delete orders for this client
-        $stmt = $conn->prepare("DELETE FROM orders WHERE client_id = ?");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
-        $stmt->execute();
-
-        // Delete the client
-        $stmt = $conn->prepare("DELETE FROM clients WHERE id = ?");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
-        $stmt->execute();
-
-        $conn->commit();
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "Failed to delete client: " . $e->getMessage();
-        exit();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['delete_client'])) {
+        deleteClient($conn, intval($_POST['delete_client_id']));
+    } else {
+        placeOrder($conn, $_POST);
     }
 }
 
-// Fetch products for dropdown
-$instock_result = $conn->query("SELECT * FROM instock");
-$instock = [];
-while ($row = $instock_result->fetch_assoc()) {
-    $instock[] = $row;
-}
-
-// Handle new order submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
-    $conn->begin_transaction();
-
-    try {
-        // Insert client
-        $stmt = $conn->prepare("INSERT INTO clients (name, address, contact_number, company_name) VALUES (?, ?, ?, ?)");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("ssss", $_POST['name'], $_POST['address'], $_POST['contact'], $_POST['company']);
-        $stmt->execute();
-        $client_id = $stmt->insert_id;
-
-        $grand_total = 0;
-        $order_items = [];
-
-        for ($i = 0; $i < count($_POST['instock']); $i++) {
-            $product_id = $_POST['instock'][$i];
-            $quantity = $_POST['quantity'][$i];
-
-            // Get product price
-            $stmt = $conn->prepare("SELECT price FROM instock WHERE id = ?");
-            if (!$stmt) throw new Exception($conn->error);
-            $stmt->bind_param("i", $product_id);
-            $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            $price = $result['price'];
-            $total = $price * $quantity;
-            $grand_total += $total;
-
-            $order_items[] = [
-                'product_id' => $product_id,
-                'quantity' => $quantity,
-                'price' => $price,
-                'total_price' => $total
-            ];
-        }
-
-        // Insert order
-        $stmt = $conn->prepare("INSERT INTO orders (client_id, order_date, grand_total) VALUES (?, NOW(), ?)");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("id", $client_id, $grand_total);
-        $stmt->execute();
-        $order_id = $stmt->insert_id;
-
-        foreach ($order_items as $item) {
-            // Check stock availability
-            $stmtCheck = $conn->prepare("SELECT quantity FROM instock WHERE id = ?");
-            if (!$stmtCheck) throw new Exception($conn->error);
-            $stmtCheck->bind_param("i", $item['product_id']);
-            $stmtCheck->execute();
-            $resultCheck = $stmtCheck->get_result()->fetch_assoc();
-
-            if ($resultCheck['quantity'] < $item['quantity']) {
-                throw new Exception("Not enough stock for product ID " . $item['product_id']);
-            }
-
-            // Insert order item
-            $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES (?, ?, ?, ?, ?)");
-            if (!$stmt) throw new Exception($conn->error);
-            $stmt->bind_param("iiidd", $order_id, $item['product_id'], $item['quantity'], $item['price'], $item['total_price']);
-            $stmt->execute();
-
-            // Update inventory
-            $stmt = $conn->prepare("UPDATE instock SET quantity = quantity - ? WHERE id = ?");
-            if (!$stmt) throw new Exception($conn->error);
-            $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
-            $stmt->execute();
-        }
-
-        $conn->commit();
-        header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
-        exit();
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "Failed to place order: " . $e->getMessage();
-        exit();
-    }
-}
+$inventory = getInventory($conn);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,6 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
   <link href="/project-inventory-system/css/header.css" rel="stylesheet">
 </head>
 <body>
+
+
+    <?php if (!empty($error_message)): ?> 
+      <div id="notification"><?= htmlspecialchars($error_message) ?></div>
+    <?php endif; ?>
+
 
     <div class="header">
       <div class="left-icon">
@@ -183,9 +71,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
-        <div class="menu-item instock" onclick="window.location.href='/project-inventory-system/manager/instock.php'">
+        <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/manager/inventory.php'">
             <i class="fas fa-boxes sidebar-icon"></i>
-            <div class="menu-label">In Stock</div> 
+            <div class="menu-label">Inventory</div> 
         </div>
         <div class="menu-item products" onclick="window.location.href='/project-inventory-system/manager/products.php'">
             <i class="fas fa-tags sidebar-icon"></i>
@@ -206,7 +94,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
 <div class="main">
   <div class="form-and-list">
 
-    <!-- Form Container -->
     <div class="container">
       <h1>Orders</h1>
       <form method="POST">
@@ -219,35 +106,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             <label>Company Name: <input type="text" name="company"></label>
           </div>
 
-          <div class="form-section instock">
+          <div class="form-section inventory">
             <h3>Products</h3>
-            <div class="scroll-box" id="instock">
-              <div class="product-row" data-price="0">
-                <select name="instock[]" onchange="updateUnitPrice(this)">
+            
+            <div class="scroll-box" id="inventory">
+              <div class="product-row" data-price="0" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                <select name="inventory[]" onchange="updateUnitPrice(this)">
                   <option value="" disabled selected>Select Product</option>
-                  <?php foreach ($instock as $product): ?>
+                  <?php foreach ($inventory as $product): ?>
                     <option value="<?= $product['id'] ?>" data-price="<?= $product['price'] ?>">
                       <?= htmlspecialchars($product['product']) ?> - ₱<?= $product['price'] ?>
                     </option>
                   <?php endforeach; ?>
                 </select>
+
                 <button type="button" onclick="changeQty(this, -1)">−</button>
-                <input type="number" name="quantity[]" value="1" min="1" readonly style="width: 30px; text-align: center;">
+                <input type="number" name="quantity[]" value="0" min="0" 
+                      style="width: auto; max-width: 80px; text-align: center;" 
+                      oninput="manualQtyChange(this)">
                 <button type="button" onclick="changeQty(this, 1)">+</button>
                 <span>₱<span class="price">0.00</span></span>
+
+                <button type="button" onclick="removeProductRow(this)" style="color: white; background: red; border: none; padding: 4px 8px; border-radius: 4px;">
+                  Remove
+                </button>
               </div>
+            </div>
 
+            <div class="form-summary" >
+              <p><strong>Total: ₱<span id="grandTotal">0.00</span></strong></p>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="action-button" onclick="addProduct()">Add Another Product</button>
+              <button type="submit" class="action-button">Submit Order</button>
+            </div>
           </div>
 
-            <p><strong>Total: ₱<span id="grandTotal">0.00</span></strong></p>
-            <button type="button" onclick="addProduct()">Add Another Product</button>
-            <button type="submit">Submit Order</button>
-          </div>
-        </div>
       </form>
     </div>
 
-    <!-- Clients List -->
     <div class="clients-list">
       <h3>Existing Orders</h3>
       <div style="overflow-x: auto; width: 100%;">
@@ -261,36 +158,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
               <th>Status</th>
             </tr>
           </thead>
-          <tbody>
+            <tbody>
             <?php
             $result = $conn->query("
               SELECT orders.id AS order_id, clients.id AS client_id, clients.name AS client_name, 
-                     orders.order_date, orders.grand_total, orders.status
+                    orders.order_date, orders.grand_total, orders.status
               FROM orders
               JOIN clients ON orders.client_id = clients.id
               ORDER BY orders.order_date ASC
             ");
-
-            if ($result->num_rows > 0):
-              while ($row = $result->fetch_assoc()):
+              if (!$result) {
+                  echo "<tr><td colspan='6'>Error fetching orders: " . $conn->error . "</td></tr>";
+              } elseif ($result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                    ?>
+                    <tr class="clickable-row" data-id="<?= $row['order_id'] ?>" data-client-id="<?= $row['client_id'] ?>">
+                      <td><?= htmlspecialchars($row['order_id']) ?></td>
+                      <td><?= htmlspecialchars($row['client_name']) ?></td>
+                      <td><?= htmlspecialchars($row['order_date']) ?></td>
+                      <td>₱<?= number_format($row['grand_total'], 2) ?></td>
+                      <td><?= htmlspecialchars($row['status']) ?></td>
+                    </tr>
+                    <?php
+                  } 
+              } else {
+                  echo "<tr><td colspan='6'>No orders found.</td></tr>";
+              }
             ?>
-              <tr class="clickable-row" data-id="<?= $row['order_id'] ?>" data-client-id="<?= $row['client_id'] ?>">
-                <td><?= htmlspecialchars($row['order_id']) ?></td>
-                <td><?= htmlspecialchars($row['client_name']) ?></td>
-                <td><?= htmlspecialchars($row['order_date']) ?></td>
-                <td>₱<?= number_format($row['grand_total'], 2) ?></td>
-                <td><?= htmlspecialchars($row['status']) ?></td>
-              </tr>
-            <?php endwhile; else: ?>
-              <tr><td colspan="6">No orders found.</td></tr>
-            <?php endif; ?>
-          </tbody>
+            </tbody>
+
         </table>
       </div>
     </div>
 
-  </div> <!-- end .form-and-list -->
-</div> <!-- end .main -->
+  </div> 
+</div> 
 
 
   <script src="/project-inventory-system/js/header.js"></script>
