@@ -11,7 +11,7 @@ if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
 
-include 'db_connection.php'; // Ensure this connects to `ims_db`
+include 'db_connection.php'; 
 
 $orderData = [];
 
@@ -34,7 +34,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 $productSales = [];
 
-// Fetch all products for pie chart
 $sql = "
     SELECT product, quantity 
     FROM inventory
@@ -49,7 +48,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
-// Fetch top 3 sold products for table
 $topSoldProducts = [];
 
 $sql = "
@@ -70,7 +68,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
-// ✅ Get critical stock for stock alert
 $stockAlerts = [];
 
 $sql = "SELECT product, quantity, status FROM inventory WHERE status = 'critical'";
@@ -99,7 +96,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
   <div class="left-icon">
     <i class="fas fa-bars"></i>
@@ -123,7 +119,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     <?php endif; ?>
 </div>
 
-<!-- Sidebar -->
 <div class="sidebar">
   <div class="menu-item dashboard">
     <i class="fas fa-chart-line sidebar-icon"></i>
@@ -151,7 +146,6 @@ while ($row = mysqli_fetch_assoc($result)) {
   </div>
 </div>
 
-<!-- Main Content -->
 <div class="main">
   <div class="chart-grid-2">
     <div class="chart-box">
@@ -165,7 +159,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     </div>
   </div>
 
-  <!-- ✅ Stock Report Section -->
   <div class="card-grid-2">
     <div class="table-card">
       <h4>Stock Alert</h4>

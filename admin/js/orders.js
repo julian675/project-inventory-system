@@ -85,16 +85,7 @@ function addProduct() {
     document.getElementById('inventory').appendChild(clone);
 }
 
-function removeProductRow(button) {
-    const rows = document.querySelectorAll('.product-row');
-    if (rows.length > 1) {
-        const row = button.closest('.product-row');
-        row.remove();
-        updateGrandTotal();
-    } else {
-        alert("At least one product must remain.");
-    }
-}
+
 
 function cleanEmptyProductRows() {
     const rows = document.querySelectorAll('.product-row');

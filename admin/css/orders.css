@@ -242,8 +242,3 @@ button:hover {
     z-index: 1000;
 
 }
-
-  .removed-row {
-    background-color: #ffcccc !important;
-    opacity: 0.6;
-  }

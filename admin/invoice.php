@@ -1,19 +1,16 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
 }
 
-// Set username for display
 $username = 'Guest';
 if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
 
-// Database connection
 $host = "localhost";
 $username_db = "root";
 $password = "";
@@ -45,7 +42,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
     <div class="left-icon"><i class="fas fa-bars"></i></div>
     <div class="right-contents">
@@ -59,7 +55,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     </div>
 </div>
 
-<!-- Dropdown -->
 <div id="login-dropdown" class="dropdown-box">
     <?php if (isset($_SESSION['username'])): ?>
         <a href="/project-inventory-system/logout.php" class="login-button">Log Out</a>
@@ -68,7 +63,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     <?php endif; ?>
 </div>
 
-<!-- Sidebar -->
 <div class="sidebar">
     <div class="menu-item" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
         <i class="fas fa-chart-line sidebar-icon"></i>
@@ -96,7 +90,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     </div>
 </div>
 
-<!-- Client Sidebar -->
 <div class="client-sidebar">
     <h2>Clients</h2>
     <?php
@@ -110,7 +103,6 @@ $selected_client_id = isset($_GET['client_id']) ? intval($_GET['client_id']) : n
     ?>
 </div>
 
-<!-- Main Content -->
 <div class="main-content">
     <?php if ($selected_client_id): ?>
         <h2>Order Details</h2>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Redirect if not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
@@ -11,29 +12,24 @@ if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
 
+// Connect to DB
 $conn = new mysqli('localhost', 'root', '', 'ims_db');
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
 // ✅ Handle order removal
-if (isset($_POST['remove_order']) && isset($_POST['remove_order_id'])) {
+if (isset($_POST['remove_order'])) {
     $remove_order_id = intval($_POST['remove_order_id']);
-    try {
-        $stmt = $conn->prepare("UPDATE orders SET is_removed = 1 WHERE id = ?");
-        if (!$stmt) throw new Exception($conn->error);
+    $stmt = $conn->prepare("UPDATE orders SET is_removed = 1 WHERE id = ?");
+    if ($stmt) {
         $stmt->bind_param("i", $remove_order_id);
         $stmt->execute();
-        header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']));
-        exit();
-    } catch (Exception $e) {
-        echo "Failed to remove order: " . $e->getMessage();
-        exit();
+        $stmt->close();
     }
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
 }
-
-// rest of your existing code continues...
-
 
 // Handle client deletion
 if (isset($_POST['delete_client'])) {
@@ -66,19 +62,18 @@ if (isset($_POST['delete_client'])) {
     }
 }
 
-// Fetch inventory for dropdown
+// Fetch inventory
 $inventory_result = $conn->query("SELECT * FROM inventory");
 $inventory = [];
 while ($row = $inventory_result->fetch_assoc()) {
     $inventory[] = $row;
 }
 
-// Handle new order submission
+// ✅ Handle placing new orders
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
     $conn->begin_transaction();
 
     try {
-        // Insert client
         $stmt = $conn->prepare("INSERT INTO clients (name, address, contact_number, company_name) VALUES (?, ?, ?, ?)");
         if (!$stmt) throw new Exception($conn->error);
         $stmt->bind_param("ssss", $_POST['name'], $_POST['address'], $_POST['contact'], $_POST['company']);
@@ -93,7 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
                 $product_id = $_POST['inventory'][$i];
                 $quantity = $_POST['quantity'][$i];
 
-                // Get product price
                 $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
                 if (!$stmt) throw new Exception($conn->error);
                 $stmt->bind_param("i", $product_id);
@@ -114,7 +108,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             throw new Exception("No products selected for the order.");
         }
 
-        // Insert order
         $stmt = $conn->prepare("INSERT INTO orders (client_id, order_date, grand_total) VALUES (?, NOW(), ?)");
         if (!$stmt) throw new Exception($conn->error);
         $stmt->bind_param("id", $client_id, $grand_total);
@@ -122,7 +115,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         $order_id = $stmt->insert_id;
 
         foreach ($order_items as $item) {
-            // Check stock availability
             $stmtCheck = $conn->prepare("SELECT quantity FROM inventory WHERE id = ?");
             if (!$stmtCheck) throw new Exception($conn->error);
             $stmtCheck->bind_param("i", $item['product_id']);
@@ -133,19 +125,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
                 throw new Exception("Not enough stock for product ID " . $item['product_id']);
             }
 
-            // Insert order item
             $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price, total_price) VALUES (?, ?, ?, ?, ?)");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("iiidd", $order_id, $item['product_id'], $item['quantity'], $item['price'], $item['total_price']);
             $stmt->execute();
 
-            // Update inventory
             $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
             $stmt->execute();
 
-            // Update product status
             require_once('utils.php');
             updateStatus($conn, $item['product_id']);
         }
@@ -160,6 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -238,7 +228,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
 <div class="main">
   <div class="form-and-list">
 
-    <!-- Form Container -->
+
     <div class="container">
       <h1>Orders</h1>
       <form method="POST">
@@ -256,7 +246,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             
             <div class="scroll-box" id="inventory">
               <div class="product-row" data-price="0" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
-                <!-- Product Select -->
+
                 <select name="inventory[]" onchange="updateUnitPrice(this)">
                   <option value="" disabled selected>Select Product</option>
                   <?php foreach ($inventory as $product): ?>
@@ -266,24 +256,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
                   <?php endforeach; ?>
                 </select>
 
-                <!-- Quantity Controls -->
+           
                 <button type="button" onclick="changeQty(this, -1)">−</button>
                 <input type="number" name="quantity[]" value="0" min="0" 
                       style="width: auto; max-width: 80px; text-align: center;" 
                       oninput="manualQtyChange(this)">
                 <button type="button" onclick="changeQty(this, 1)">+</button>
 
-                <!-- Line Total -->
+        
                 <span>₱<span class="price">0.00</span></span>
 
-                <!-- Remove Button -->
                 <button type="button" onclick="removeProductRow(this)" style="color: white; background: red; border: none; padding: 4px 8px; border-radius: 4px;">
                   Remove
                 </button>
               </div>
             </div>
-
-            <!-- Add Summary and Actions Here -->
+        
             <div class="form-summary" >
               <p><strong>Total: ₱<span id="grandTotal">0.00</span></strong></p>
             </div>
@@ -296,7 +284,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
       </form>
     </div>
 
-    <!-- Clients List -->
     <div class="clients-list">
       <h3>Existing Orders</h3>
       <div style="overflow-x: auto; width: 100%;">
@@ -339,7 +326,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
                       </td>
                     </tr>
                     <?php
-                  } // end while
+                  }
               } else {
                   echo "<tr><td colspan='6'>No orders found.</td></tr>";
               }
@@ -350,8 +337,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
       </div>
     </div>
 
-  </div> <!-- end .form-and-list -->
-</div> <!-- end .main -->
+  </div>
+</div>
+
 
 
   <script src="/project-inventory-system/js/header.js"></script>

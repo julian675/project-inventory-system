@@ -45,6 +45,19 @@ if (isset($_POST['delete_client'])) {
     }
 }
 
+// ✅ Handle order soft-deletion
+if (isset($_POST['remove_order'])) {
+    $remove_order_id = intval($_POST['remove_order_id']);
+    $stmt = $conn->prepare("UPDATE orders SET is_removed = 1 WHERE id = ?");
+    if ($stmt) {
+        $stmt->bind_param("i", $remove_order_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
 // Fetch products
 $inventory_result = $conn->query("SELECT * FROM inventory");
 $inventory = [];
@@ -53,7 +66,7 @@ while ($row = $inventory_result->fetch_assoc()) {
 }
 
 // Handle order submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client']) && !isset($_POST['remove_order'])) {
     $conn->begin_transaction();
 
     try {

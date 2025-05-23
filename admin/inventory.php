@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
 }
 
-// Set username for display
 $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
 ?>
 
@@ -25,7 +23,6 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
   <div class="left-icon">
     <i class="fas fa-bars"></i>
@@ -49,7 +46,6 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
   <?php endif; ?>
 </div>
 
-<!-- Sidebar -->
 <div class="sidebar">
   <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
     <i class="fas fa-chart-line sidebar-icon"></i>
@@ -77,7 +73,6 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
   </div>
 </div>
 
-<!-- Main content -->
 <div class="main">
   <div class="blank-container">
     <div class="container">
