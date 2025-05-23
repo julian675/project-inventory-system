@@ -144,3 +144,19 @@ th, td {
   height: 100% !important;
   display: block;
 }
+
+.pie-chart-box {
+  position: relative;
+}
+
+.pie-chart-title {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 1;
+}

@@ -159,7 +159,8 @@ while ($row = mysqli_fetch_assoc($result)) {
         <canvas id="lineChart"></canvas>
       </div>
     </div>
-    <div class="chart-box">
+    <div class="chart-box pie-chart-box">
+      <h3 class="pie-chart-title">Product Quantity</h3>
       <canvas id="pieChart"></canvas>
     </div>
   </div>

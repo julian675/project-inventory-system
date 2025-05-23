@@ -18,9 +18,18 @@ function updateUnitPrice(select) {
     const productRow = select.closest('.product-row');
     const price = parseFloat(select.selectedOptions[0].getAttribute('data-price'));
     productRow.setAttribute('data-price', price);
+
+    // 🔽 Set quantity to 1 if it is 0 or empty
+    const quantityInput = productRow.querySelector('input[name="quantity[]"]');
+    if (!quantityInput.value || parseInt(quantityInput.value) === 0) {
+        quantityInput.value = 1;
+    }
+
     updateRowTotal(productRow);
     updateGrandTotal();
+    cleanEmptyProductRows();
 }
+
 
 function changeQty(button, delta) {
   const input = button.parentNode.querySelector('input[name="quantity[]"]');
@@ -34,11 +43,6 @@ function changeQty(button, delta) {
 }
 
 function manualQtyChange(input) {
-  let value = parseInt(input.value);
-  if (isNaN(value) || value < 1) {
-    input.value = 1;
-    value = 1;
-  }
   const productRow = input.closest('.product-row');
   updateRowTotal(productRow);
   updateGrandTotal();
@@ -63,13 +67,45 @@ function updateGrandTotal() {
 }
 
 function addProduct() {
+    cleanEmptyProductRows();
+
+    const last = document.querySelectorAll('.product-row');
+    const lastSelect = last[last.length - 1].querySelector('select');
+    if (!lastSelect.value) {
+        alert("Please select a product before adding another.");
+        return;
+    }
+
     const first = document.querySelector('.product-row');
     const clone = first.cloneNode(true);
     clone.querySelector('select').selectedIndex = 0;
-    clone.querySelector('input[name="quantity[]"]').value = 1;
+    clone.querySelector('input[name="quantity[]"]').value = 0;
     clone.querySelector('.price').innerText = "0.00";
     clone.setAttribute('data-price', 0);
     document.getElementById('inventory').appendChild(clone);
+}
+
+function removeProductRow(button) {
+    const rows = document.querySelectorAll('.product-row');
+    if (rows.length > 1) {
+        const row = button.closest('.product-row');
+        row.remove();
+        updateGrandTotal();
+    } else {
+        alert("At least one product must remain.");
+    }
+}
+
+function cleanEmptyProductRows() {
+    const rows = document.querySelectorAll('.product-row');
+    if (rows.length <= 1) return;
+
+    rows.forEach(row => {
+        const select = row.querySelector('select');
+        if (!select.value) {
+            row.remove();
+        }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function () {

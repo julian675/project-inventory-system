@@ -229,8 +229,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
 
           <div class="form-section inventory">
             <h3>Products</h3>
+            
             <div class="scroll-box" id="inventory">
-              <div class="product-row" data-price="0">
+              <div class="product-row" data-price="0" style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                <!-- Product Select -->
                 <select name="inventory[]" onchange="updateUnitPrice(this)">
                   <option value="" disabled selected>Select Product</option>
                   <?php foreach ($inventory as $product): ?>
@@ -239,19 +241,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
                     </option>
                   <?php endforeach; ?>
                 </select>
+
+                <!-- Quantity Controls -->
                 <button type="button" onclick="changeQty(this, -1)">−</button>
-                <input type="number" name="quantity[]" value="1" min="1" style="width: 40px; text-align: center;" oninput="manualQtyChange(this)">
+                <input type="number" name="quantity[]" value="0" min="0" 
+                      style="width: auto; max-width: 80px; text-align: center;" 
+                      oninput="manualQtyChange(this)">
                 <button type="button" onclick="changeQty(this, 1)">+</button>
+
+                <!-- Line Total -->
                 <span>₱<span class="price">0.00</span></span>
+
+                <!-- Remove Button -->
+                <button type="button" onclick="removeProductRow(this)" style="color: white; background: red; border: none; padding: 4px 8px; border-radius: 4px;">
+                  Remove
+                </button>
               </div>
+            </div>
 
+            <!-- Add Summary and Actions Here -->
+            <div class="form-summary" >
+              <p><strong>Total: ₱<span id="grandTotal">0.00</span></strong></p>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="action-button" onclick="addProduct()">Add Another Product</button>
+              <button type="submit" class="action-button">Submit Order</button>
+            </div>
           </div>
 
-            <p><strong>Total: ₱<span id="grandTotal">0.00</span></strong></p>
-            <button type="button" onclick="addProduct()">Add Another Product</button>
-            <button type="submit">Submit Order</button>
-          </div>
-        </div>
       </form>
     </div>
 
