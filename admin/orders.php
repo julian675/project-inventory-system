@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
 }
 
-// Set username for display
 $username = 'Guest';
 if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
@@ -19,25 +17,22 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Handle client deletion
 if (isset($_POST['delete_client'])) {
     $delete_client_id = intval($_POST['delete_client_id']);
     $conn->begin_transaction();
 
     try {
-        // Delete order_items linked to this client via orders
+
         $stmt = $conn->prepare("DELETE oi FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.client_id = ?");
         if (!$stmt) throw new Exception($conn->error);
         $stmt->bind_param("i", $delete_client_id);
         $stmt->execute();
 
-        // Delete orders for this client
         $stmt = $conn->prepare("DELETE FROM orders WHERE client_id = ?");
         if (!$stmt) throw new Exception($conn->error);
         $stmt->bind_param("i", $delete_client_id);
         $stmt->execute();
 
-        // Delete the client
         $stmt = $conn->prepare("DELETE FROM clients WHERE id = ?");
         if (!$stmt) throw new Exception($conn->error);
         $stmt->bind_param("i", $delete_client_id);
@@ -137,9 +132,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
         exit();
     } catch (Exception $e) {
-        $conn->rollback();
-        echo "Failed to place order: " . $e->getMessage();
-        exit();
+      $conn->rollback();
+      $error_message = "Failed to place order: " . $e->getMessage();
+
     }
 }
 ?>
@@ -155,6 +150,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
   <link href="/project-inventory-system/css/header.css" rel="stylesheet">
 </head>
 <body>
+
+
+    <?php if (!empty($error_message)): ?> 
+      <div id="notification"><?= htmlspecialchars($error_message) ?></div>
+    <?php endif; ?>
+
 
     <div class="header">
       <div class="left-icon">
@@ -287,36 +288,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
+            <tbody>
             <?php
             $result = $conn->query("
               SELECT orders.id AS order_id, clients.id AS client_id, clients.name AS client_name, 
-                     orders.order_date, orders.grand_total, orders.status
+                    orders.order_date, orders.grand_total, orders.status
               FROM orders
               JOIN clients ON orders.client_id = clients.id
               ORDER BY orders.order_date ASC
             ");
-
-            if ($result->num_rows > 0):
-              while ($row = $result->fetch_assoc()):
+              if (!$result) {
+                  echo "<tr><td colspan='6'>Error fetching orders: " . $conn->error . "</td></tr>";
+              } elseif ($result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                    ?>
+                    <tr class="clickable-row" data-id="<?= $row['order_id'] ?>" data-client-id="<?= $row['client_id'] ?>">
+                      <td><?= htmlspecialchars($row['order_id']) ?></td>
+                      <td><?= htmlspecialchars($row['client_name']) ?></td>
+                      <td><?= htmlspecialchars($row['order_date']) ?></td>
+                      <td>₱<?= number_format($row['grand_total'], 2) ?></td>
+                      <td><?= htmlspecialchars($row['status']) ?></td>
+                      <td>
+                        <form method="POST" onsubmit="return confirm('Are you sure you want to delete this client and all related data?');">
+                          <input type="hidden" name="delete_client_id" value="<?= $row['client_id'] ?>">
+                          <button type="submit" name="delete_client">Remove Client</button>
+                        </form>
+                      </td>
+                    </tr>
+                    <?php
+                  } // end while
+              } else {
+                  echo "<tr><td colspan='6'>No orders found.</td></tr>";
+              }
             ?>
-              <tr class="clickable-row" data-id="<?= $row['order_id'] ?>" data-client-id="<?= $row['client_id'] ?>">
-                <td><?= htmlspecialchars($row['order_id']) ?></td>
-                <td><?= htmlspecialchars($row['client_name']) ?></td>
-                <td><?= htmlspecialchars($row['order_date']) ?></td>
-                <td>₱<?= number_format($row['grand_total'], 2) ?></td>
-                <td><?= htmlspecialchars($row['status']) ?></td>
-                <td>
-                  <form method="POST" onsubmit="return confirm('Are you sure you want to delete this client and all related data?');">
-                    <input type="hidden" name="delete_client_id" value="<?= $row['client_id'] ?>">
-                    <button type="submit" name="delete_client">Remove Client</button>
-                  </form>
-                </td>
-              </tr>
-            <?php endwhile; else: ?>
-              <tr><td colspan="6">No orders found.</td></tr>
-            <?php endif; ?>
-          </tbody>
+            </tbody>
+
         </table>
       </div>
     </div>

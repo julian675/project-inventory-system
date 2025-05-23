@@ -1,6 +1,6 @@
 function updateUnitPrice(select) {
     const selectedProductId = select.value;
-    const allSelects = document.querySelectorAll('select[name="instock[]"]');
+    const allSelects = document.querySelectorAll('select[name="inventory[]"]');
     let duplicateFound = false;
 
     allSelects.forEach(sel => {
@@ -22,9 +22,25 @@ function updateUnitPrice(select) {
     updateGrandTotal();
 }
 
+function removeProductRow(button) {
+  const row = button.closest('.product-row');
+  row.style.backgroundColor = '#ffcccc'; // light red
+  row.style.opacity = '0.6'; // optional, to dim the row
+  row.querySelectorAll('input, select, button').forEach(el => {
+    el.disabled = true; // optional: disable inputs in the row
+  });
+
+  // Optionally, mark for ignoring during form submission:
+  row.setAttribute('data-removed', 'true');
+}
+
+// Other existing JavaScript functions...
+
 function changeQty(button, delta) {
     const input = button.parentNode.querySelector('input[name="quantity[]"]');
-    let qty = parseInt(input.value) + delta;
+    let qty = parseInt(input.value);
+    if (isNaN(qty) || qty < 1) qty = 1;
+    qty += delta;
     if (qty < 1) qty = 1;
     input.value = qty;
 
@@ -32,6 +48,7 @@ function changeQty(button, delta) {
     updateRowTotal(row);
     updateGrandTotal();
 }
+
 
 function updateRowTotal(row) {
     const price = parseFloat(row.getAttribute('data-price')) || 0;
@@ -43,12 +60,14 @@ function updateRowTotal(row) {
 function updateGrandTotal() {
     let total = 0;
     document.querySelectorAll('.product-row').forEach(row => {
+        if (row.getAttribute('data-removed') === 'true') return;
         const qty = parseInt(row.querySelector('input[name="quantity[]"]').value);
         const price = parseFloat(row.getAttribute('data-price')) || 0;
         total += price * qty;
     });
     document.getElementById('grandTotal').innerText = total.toFixed(2);
 }
+
 
 function addProduct() {
     const first = document.querySelector('.product-row');
@@ -71,3 +90,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+
+

@@ -1,16 +1,13 @@
 <?php
 session_start();
 
-// Block access if not logged in or not admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
 }
 
-// Set username for display
 $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
 
-// Database connection
 $host = "localhost";
 $user = "root";
 $password = "";
@@ -22,7 +19,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Run the query to fetch inventory data
 $sql = "SELECT product, price FROM inventory";
 $result = $conn->query($sql);
 ?>

@@ -37,6 +37,7 @@ $("#deleteSelected").click(function() {
   $.post("/project-inventory-system/admin/backend/inventory_backend.php", { delete_ids: ids }, loadItems);
 });
 
+
 $(document).on('click', '.plus-btn', function() {
   const id = $(this).data('id');
   $.post("/project-inventory-system/admin/backend/inventory_backend.php", { update_quantity: true, id: id, delta: 1 }, loadItems);
@@ -65,3 +66,4 @@ $("#searchBox").on("input", function() {
 });
 
 $(document).ready(loadItems);
+

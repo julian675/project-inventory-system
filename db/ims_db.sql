@@ -30,6 +30,7 @@ CREATE TABLE orders (
     grand_total DECIMAL(10,2), 
     status ENUM('pending', 'completed', 'canceled') DEFAULT 'pending',
     FOREIGN KEY (client_id) REFERENCES clients(id)
+    ALTER TABLE orders ADD COLUMN is_removed TINYINT(1) NOT NULL DEFAULT 0;
 );
 
 CREATE TABLE order_items (

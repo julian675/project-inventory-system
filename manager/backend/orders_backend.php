@@ -1,54 +1,13 @@
 <?php
 session_start();
-
-// Block access if not logged in or not admin
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: admin/login.php");
-    exit;
-}
-
-// Set username for display
-$username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
-
 // Include database connection
 include 'db.php';
 
-// Handle client deletion
-if (isset($_POST['delete_client'])) {
-    $delete_client_id = intval($_POST['delete_client_id']);
-    $conn->begin_transaction();
-
-    try {
-        $stmt = $conn->prepare("DELETE oi FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.client_id = ?");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
-        $stmt->execute();
-
-        $stmt = $conn->prepare("DELETE FROM orders WHERE client_id = ?");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
-        $stmt->execute();
-
-        $stmt = $conn->prepare("DELETE FROM clients WHERE id = ?");
-        if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("i", $delete_client_id);
-        $stmt->execute();
-
-        $conn->commit();
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "Failed to delete client: " . $e->getMessage();
-        exit();
-    }
-}
-
 // Fetch products
-$instock_result = $conn->query("SELECT * FROM instock");
-$instock = [];
-while ($row = $instock_result->fetch_assoc()) {
-    $instock[] = $row;
+$inventory = $conn->query("SELECT * FROM inventory");
+$inventory = [];
+while ($row = $inventory_result->fetch_assoc()) {
+    $inventory[] = $row;
 }
 
 // Handle order submission
@@ -56,20 +15,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
     $conn->begin_transaction();
 
     try {
+        $name = htmlspecialchars(trim($_POST['name']));
+        $address = htmlspecialchars(trim($_POST['address']));
+        $contact = htmlspecialchars(trim($_POST['contact']));
+        $company = htmlspecialchars(trim($_POST['company']));
+
         $stmt = $conn->prepare("INSERT INTO clients (name, address, contact_number, company_name) VALUES (?, ?, ?, ?)");
         if (!$stmt) throw new Exception($conn->error);
-        $stmt->bind_param("ssss", $_POST['name'], $_POST['address'], $_POST['contact'], $_POST['company']);
+        $stmt->bind_param("ssss", $name, $address, $contact, $company);
+
         $stmt->execute();
         $client_id = $stmt->insert_id;
 
         $grand_total = 0;
         $order_items = [];
 
-        for ($i = 0; $i < count($_POST['instock']); $i++) {
-            $product_id = $_POST['instock'][$i];
+        for ($i = 0; $i < count($_POST['inventory']); $i++) {
+            $product_id = $_POST['inventory'][$i];
             $quantity = $_POST['quantity'][$i];
 
-            $stmt = $conn->prepare("SELECT price FROM instock WHERE id = ?");
+            $stmt = $conn->prepare("SELECT price FROM inventory WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("i", $product_id);
             $stmt->execute();
@@ -93,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         $order_id = $stmt->insert_id;
 
         foreach ($order_items as $item) {
-            $stmtCheck = $conn->prepare("SELECT quantity FROM instock WHERE id = ?");
+            $stmtCheck = $conn->prepare("SELECT quantity FROM inventory WHERE id = ?");
             if (!$stmtCheck) throw new Exception($conn->error);
             $stmtCheck->bind_param("i", $item['product_id']);
             $stmtCheck->execute();
@@ -108,10 +73,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
             $stmt->bind_param("iiidd", $order_id, $item['product_id'], $item['quantity'], $item['price'], $item['total_price']);
             $stmt->execute();
 
-            $stmt = $conn->prepare("UPDATE instock SET quantity = quantity - ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE inventory SET quantity = quantity - ? WHERE id = ?");
             if (!$stmt) throw new Exception($conn->error);
             $stmt->bind_param("ii", $item['quantity'], $item['product_id']);
             $stmt->execute();
+
+            require_once('utils.php');
+            updateStatus($conn, $item['product_id']);
         }
 
         $conn->commit();
@@ -119,7 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete_client'])) {
         exit();
     } catch (Exception $e) {
         $conn->rollback();
-        echo "Failed to place order: " . $e->getMessage();
+        error_log("Order placement error: " . $e->getMessage());  // logs to server
+        echo "Failed to place order. Please try again later.";
+
         exit();
     }
 }

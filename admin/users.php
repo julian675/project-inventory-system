@@ -1,19 +1,16 @@
 <?php
 session_start();
 
-// Only allow logged-in admins
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin/login.php");
     exit;
 }
 
-// Set username for display safely
 $username = 'Guest';
 if (isset($_SESSION['username'])) {
     $username = htmlspecialchars($_SESSION['username']);
 }
 
-// Database connection
 $host = "localhost";
 $db = "ims_db";
 $user = "root";
@@ -24,7 +21,6 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-// Fetch users
 $sql = "SELECT id, uname, fname, lname, role FROM users";
 $result = $conn->query($sql);
 
@@ -162,9 +158,9 @@ function handleAction(action, userId) {
       .then(response => response.text())
       .then(data => {
         if (data.trim() === 'OK') {
-          location.reload(); // Refresh current page
+          location.reload(); 
         } else {
-          alert(data); // Show error if any
+          alert(data); 
         }
       })
       .catch(err => {

@@ -119,3 +119,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+ document.addEventListener("DOMContentLoaded", () => {
+    const notification = document.getElementById('notification');
+    if (!notification) return;
+
+    function hideNotification() {
+      notification.style.opacity = '0';             // start fade out
+      setTimeout(() => notification.remove(), 500); // remove from DOM after fade
+    }
+
+    // Auto-hide after 1.5 seconds
+    const timer = setTimeout(hideNotification, 1500);
+
+    // Hide immediately on any click, cancel timer
+    document.addEventListener('click', () => {
+      clearTimeout(timer);
+      hideNotification();
+    }, { once: true });
+  });

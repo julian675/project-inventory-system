@@ -43,14 +43,12 @@
 
 /* The dropdown box, positioned below the header */
 .dropdown-box {
-  position: absolute;
-  top: 60px; /* Align with the bottom of the header */
+  position: fixed;
+  top: 80px; /* stays below fixed header */
   right: 15px;
   width: 200px;
-  height: 225px;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  height: auto;
+  background-color: transparent;
   z-index: 1000;
   border-radius: 5px;
   display: flex;
@@ -70,10 +68,12 @@
   border-radius: 8px;
   transition: background-color 0.3s ease;
   text-align: center;
-  width: 100px;
-  margin-top: 15px;
-  margin-left: 25px; /* Adjusted position */
+  width: 100%;        /* take full width of dropdown */
+  box-sizing: border-box;  /* include padding in width */
+  margin: 15px 0 0 0; /* space from top, no left margin */
+  cursor: pointer;
 }
+
 
 /* Hover effect for the login button */
 .login-button:hover {
