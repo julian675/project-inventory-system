@@ -25,9 +25,6 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
 <body>
 
 <div class="header">
-  <div class="left-icon">
-    <i class="fas fa-bars"></i>
-  </div>
   <div class="right-contents">
     <i class="fas fa-search"></i>
     <i class="fas fa-bell"></i>

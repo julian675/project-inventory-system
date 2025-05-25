@@ -31,6 +31,18 @@ function deleteClient($conn, $client_id) {
 function placeOrder($conn, $postData) {
     require_once('utils.php');
     $conn->begin_transaction();
+    if (
+        !isset($postData['inventory'], $postData['quantity']) ||
+        !is_array($postData['inventory']) ||
+        !is_array($postData['quantity']) ||
+        count($postData['inventory']) === 0
+    ) {
+        $_SESSION['error_message'] = "No inventory items provided.";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
+    $conn->begin_transaction();
     try {
         $stmt = $conn->prepare("INSERT INTO clients (name, address, contact_number, company_name) VALUES (?, ?, ?, ?)");
         if (!$stmt) throw new Exception($conn->error);
