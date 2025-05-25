@@ -29,40 +29,60 @@ function updateUnitPrice(select) {
     cleanEmptyProductRows();
 }
 
+function validateOrderForm() {
+    const selects = document.querySelectorAll('select[name="inventory[]"]');
+    const seen = new Set();
+
+    for (const select of selects) {
+        if (!select.value) {
+            alert("Please select a product.");
+            return false;
+        }
+        if (seen.has(select.value)) {
+            alert("Duplicate products detected. Please select different items.");
+            return false;
+        }
+        seen.add(select.value);
+    }
+
+    return true;
+}
+
 
 function changeQty(button, delta) {
-  const input = button.parentNode.querySelector('input[name="quantity[]"]');
-  let current = parseInt(input.value) || 1;
-  current += delta;
-  if (current < 1) current = 1;
-  input.value = current;
-  const productRow = input.closest('.product-row');
-  updateRowTotal(productRow);
-  updateGrandTotal();
+    const input = button.parentNode.querySelector('input[name="quantity[]"]');
+    let current = parseInt(input.value) || 1;
+    current += delta;
+    if (current < 1) current = 1;
+    input.value = current;
+
+    const productRow = input.closest('.product-row');
+    updateRowTotal(productRow);
+    updateGrandTotal();
 }
 
 function manualQtyChange(input) {
-  const productRow = input.closest('.product-row');
-  updateRowTotal(productRow);
-  updateGrandTotal();
+    const productRow = input.closest('.product-row');
+    updateRowTotal(productRow);
+    updateGrandTotal();
 }
 
 function updateRowTotal(productRow) {
-  const price = parseFloat(productRow.getAttribute('data-price')) || 0;
-  const quantityInput = productRow.querySelector('input[name="quantity[]"]');
-  const quantity = parseInt(quantityInput.value) || 1;
-  const total = price * quantity;
-  productRow.querySelector('.price').textContent = total.toFixed(2);
+    const price = parseFloat(productRow.getAttribute('data-price')) || 0;
+    const quantityInput = productRow.querySelector('input[name="quantity[]"]');
+    const quantity = parseInt(quantityInput.value) || 1;
+    const total = price * quantity;
+    productRow.querySelector('.price').textContent = total.toFixed(2);
 }
 
 function updateGrandTotal() {
-  const allRows = document.querySelectorAll('.product-row');
-  let grandTotal = 0;
-  allRows.forEach(row => {
-    const rowTotal = parseFloat(row.querySelector('.price').textContent) || 0;
-    grandTotal += rowTotal;
-  });
-  document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+    const allRows = document.querySelectorAll('.product-row');
+    let grandTotal = 0;
+    allRows.forEach(row => {
+        const rowTotal = parseFloat(row.querySelector('.price').textContent) || 0;
+        grandTotal += rowTotal;
+    });
+    document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
 }
 
 function addProduct() {
@@ -77,10 +97,20 @@ function addProduct() {
 
     const first = document.querySelector('.product-row');
     const clone = first.cloneNode(true);
-    clone.querySelector('select').selectedIndex = 0;
-    clone.querySelector('input[name="quantity[]"]').value = 0;
-    clone.querySelector('.price').innerText = "0.00";
+
+    // Reset the values
+    const select = clone.querySelector('select');
+    select.selectedIndex = 0;
+
+    const qtyInput = clone.querySelector('input[name="quantity[]"]');
+    qtyInput.value = 0;
+
+    const priceSpan = clone.querySelector('.price');
+    priceSpan.innerText = "0.00";
+
     clone.setAttribute('data-price', 0);
+
+    // Reattach event listeners if needed (not required unless you're using inline JS)
     document.getElementById('inventory').appendChild(clone);
 }
 
@@ -107,6 +137,7 @@ function cleanEmptyProductRows() {
     });
 }
 
+// Navigate to invoice on row click
 document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll(".clickable-row");
     rows.forEach(row => {
@@ -119,20 +150,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
- document.addEventListener("DOMContentLoaded", () => {
+// Auto-dismiss error notification
+document.addEventListener("DOMContentLoaded", () => {
     const notification = document.getElementById('notification');
     if (!notification) return;
 
     function hideNotification() {
-      notification.style.opacity = '0';           
-      setTimeout(() => notification.remove(), 500);
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 500);
     }
 
     const timer = setTimeout(hideNotification, 1500);
-
-
     document.addEventListener('click', () => {
-      clearTimeout(timer);
-      hideNotification();
+        clearTimeout(timer);
+        hideNotification();
     }, { once: true });
-  });
+});
+

@@ -104,7 +104,7 @@ $inventory = getInventory($conn);
 
     <div class="container">
       <h1>Orders</h1>
-      <form method="POST">
+      <form method="POST" onsubmit="return validateOrderForm();">
         <div class="form-container">
           <div class="form-section">
             <h3>Client Info</h3>
@@ -213,7 +213,7 @@ $inventory = getInventory($conn);
   </div> 
 </div> 
 
-
+              
   <script src="/project-inventory-system/js/header.js"></script>
   <script src="js/orders.js"></script>
 </body>
