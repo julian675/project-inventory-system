@@ -1,10 +1,11 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'manager'])) {
     header("Location: /project-inventory-system/login.php");
     exit;
 }
+
 
 $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
 ?>
@@ -47,7 +48,7 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
 </div>
 
 <div class="sidebar">
-  <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
+  <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/pages/dashboard.php'">
     <i class="fas fa-chart-line sidebar-icon"></i>
     <div class="menu-label">Dashboard</div> 
   </div>
@@ -55,19 +56,21 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
     <i class="fas fa-boxes sidebar-icon"></i>
     <div class="menu-label">Inventory</div> 
   </div>
-  <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
+  <div class="menu-item products" onclick="window.location.href='/project-inventory-system/pages/products.php'">
     <i class="fas fa-tags sidebar-icon"></i>
     <div class="menu-label">Products</div> 
   </div>
-  <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
+  <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/pages/orders.php'">
     <i class="fas fa-receipt sidebar-icon"></i>
     <div class="menu-label">Orders</div>
   </div>
-  <div class="menu-item users" onclick="window.location.href='/project-inventory-system/admin/users.php'">
-    <i class="fas fa-users sidebar-icon"></i>
-    <div class="menu-label">Users</div>
-  </div>
-  <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
+  <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+    <div class="menu-item users" onclick="window.location.href='/project-inventory-system/pages/users.php'">
+      <i class="fas fa-users sidebar-icon"></i>
+      <div class="menu-label">Users</div>
+    </div>
+  <?php endif; ?>
+  <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/pages/invoice.php'">
     <i class="fas fa-file-invoice sidebar-icon"></i>
     <div class="menu-label">Invoice</div>
   </div>
@@ -86,13 +89,17 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
           <input type="number" name="quantity" placeholder="Quantity" min="1" required>
           <input type="number" name="price" placeholder="Price" step="0.01" min="0" required>
           <button type="submit" class="primary-btn">Add</button>
-          <button type="button" id="deleteSelected" class="primary-btn">Delete Selected</button>
+          <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <button type="button" id="deleteSelected" class="primary-btn">Delete Selected</button>
+          <?php endif; ?>
         </form>
 
         <table>
           <thead>
             <tr>
-              <th><input type="checkbox" id="selectAll"></th>
+              <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <th><input type="checkbox" id="selectAll"></th>
+              <?php endif; ?>
               <th>Product Name</th>
               <th>Quantity</th>
               <th>Status</th>
@@ -108,7 +115,7 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
 
 <script>
 function loadItems() {
-  $.get("/project-inventory-system/admin/backend/inventory_backend.php", function(data) {
+  $.get("/project-inventory-system/pages/backend/inventory_backend.php", function(data) {
     $("#itemsTable").html(data);
   });
 }
@@ -118,7 +125,7 @@ $("#addProductForm").submit(function(e) {
   const form = this;
 
   $.ajax({
-    url: "/project-inventory-system/admin/backend/inventory_backend.php",
+    url: "/project-inventory-system/pages/backend/inventory_backend.php",
     method: "POST",
     data: $(form).serialize() + '&add=true',
     success: function() {
@@ -143,24 +150,24 @@ $("#deleteSelected").click(function() {
 
   if (ids.length === 0) return alert("Select at least one item.");
 
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { delete_ids: ids })
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { delete_ids: ids })
   .done(loadItems);
 });
 
 $(document).on('click', '.plus-btn', function() {
   const id = $(this).data('id');
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { update_quantity: true, id: id, delta: 1 }, loadItems);
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { update_quantity: true, id: id, delta: 1 }, loadItems);
 });
 
 $(document).on('click', '.minus-btn', function() {
   const id = $(this).data('id');
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { update_quantity: true, id: id, delta: -1 }, loadItems);
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { update_quantity: true, id: id, delta: -1 }, loadItems);
 });
 
 $(document).on('change', '.price-input', function() {
   const id = $(this).data('id');
   const price = $(this).val();
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { update_price: true, id: id, price: price }, loadItems);
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { update_price: true, id: id, price: price }, loadItems);
 });
 
 $("#selectAll").on("change", function() {

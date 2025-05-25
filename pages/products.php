@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'manager'])) {
     header("Location: /project-inventory-system/login.php");
     exit;
 }
@@ -64,11 +64,11 @@ $result = $conn->query($sql);
 
 
   <div class="sidebar">
-        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
+        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/pages/dashboard.php'">
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
-        <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/admin/inventory.php'">
+        <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/pages/inventory.php'">
             <i class="fas fa-boxes sidebar-icon"></i>
             <div class="menu-label">Inventory</div> 
         </div>
@@ -76,15 +76,17 @@ $result = $conn->query($sql);
             <i class="fas fa-tags sidebar-icon"></i>
             <div class="menu-label">Products</div> 
         </div>
-          <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
+          <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/pages/orders.php'">
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>
           </div>
-          <div class="menu-item users" onclick="window.location.href='/project-inventory-system/admin/users.php'">
-            <i class="fas fa-users sidebar-icon"></i>
-            <div class="menu-label">Users</div>
-          </div>
-          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
+          <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <div class="menu-item users" onclick="window.location.href='/project-inventory-system/pages/users.php'">
+              <i class="fas fa-users sidebar-icon"></i>
+              <div class="menu-label">Users</div>
+            </div>
+          <?php endif; ?>
+          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/pages/invoice.php'">
             <i class="fas fa-file-invoice sidebar-icon"></i>
             <div class="menu-label">Invoice</div>
           </div>

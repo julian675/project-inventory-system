@@ -63,19 +63,19 @@ $result = $conn->query($sql);
 </div>
 
 <div class="sidebar">
-  <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
+  <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/pages/dashboard.php'">
     <i class="fas fa-chart-line sidebar-icon"></i>
     <div class="menu-label">Dashboard</div> 
   </div>
-  <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/admin/inventory.php'">
+  <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/pages/inventory.php'">
       <i class="fas fa-boxes sidebar-icon"></i>
       <div class="menu-label">Inventory</div> 
   </div>
-  <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
+  <div class="menu-item products" onclick="window.location.href='/project-inventory-system/pages/products.php'">
       <i class="fas fa-tags sidebar-icon"></i>
       <div class="menu-label">Products</div> 
   </div>
-  <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/admin/orders.php'">
+  <div class="menu-item orders" onclick="window.location.href='/project-inventory-system/pages/orders.php'">
       <i class="fas fa-receipt sidebar-icon"></i>
       <div class="menu-label">Orders</div>
   </div>
@@ -83,7 +83,7 @@ $result = $conn->query($sql);
     <i class="fas fa-users sidebar-icon"></i>
     <div class="menu-label">Users</div>
   </div>
-  <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
+  <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/pages/invoice.php'">
     <i class="fas fa-file-invoice sidebar-icon"></i>
     <div class="menu-label">Invoice</div>
   </div>

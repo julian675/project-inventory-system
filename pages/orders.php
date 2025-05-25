@@ -1,7 +1,8 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: /project-inventory-system/login.php");    exit;
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'manager'])) {
+    header("Location: /project-inventory-system/login.php");
+    exit;
 }
 
 $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Guest';
@@ -66,15 +67,15 @@ $inventory = getInventory($conn);
 
 
   <div class="sidebar">
-        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/admin/dashboard.php'">
+        <div class="menu-item dashboard" onclick="window.location.href='/project-inventory-system/pages/dashboard.php'">
           <i class="fas fa-chart-line sidebar-icon"></i>
           <div class="menu-label">Dashboard</div> 
         </div>
-        <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/admin/inventory.php'">
+        <div class="menu-item inventory" onclick="window.location.href='/project-inventory-system/pages/inventory.php'">
             <i class="fas fa-boxes sidebar-icon"></i>
             <div class="menu-label">Inventory</div> 
         </div>
-        <div class="menu-item products" onclick="window.location.href='/project-inventory-system/admin/products.php'">
+        <div class="menu-item products" onclick="window.location.href='/project-inventory-system/pages/products.php'">
             <i class="fas fa-tags sidebar-icon"></i>
             <div class="menu-label">Products</div> 
         </div>
@@ -82,11 +83,13 @@ $inventory = getInventory($conn);
             <i class="fas fa-receipt sidebar-icon"></i>
             <div class="menu-label">Orders</div>
           </div>
-          <div class="menu-item users" onclick="window.location.href='/project-inventory-system/admin/users.php'">
-            <i class="fas fa-users sidebar-icon"></i>
-            <div class="menu-label">Users</div>
-          </div>
-          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/admin/invoice.php'">
+          <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+            <div class="menu-item users" onclick="window.location.href='/project-inventory-system/pages/users.php'">
+              <i class="fas fa-users sidebar-icon"></i>
+              <div class="menu-label">Users</div>
+            </div>
+          <?php endif; ?>
+          <div class="menu-item invoice" onclick="window.location.href='/project-inventory-system/pages/invoice.php'">
             <i class="fas fa-file-invoice sidebar-icon"></i>
             <div class="menu-label">Invoice</div>
           </div>
@@ -159,7 +162,9 @@ $inventory = getInventory($conn);
               <th>Order Date</th>
               <th>Grand Total</th>
               <th>Status</th>
-              <th>Action</th>
+              <?php if ($_SESSION['role'] === 'admin'): ?>
+                  <th>Action</th>
+              <?php endif; ?>
             </tr>
           </thead>
             <tbody>
@@ -182,12 +187,14 @@ $inventory = getInventory($conn);
                       <td><?= htmlspecialchars($row['order_date']) ?></td>
                       <td>₱<?= number_format($row['grand_total'], 2) ?></td>
                       <td><?= htmlspecialchars($row['status']) ?></td>
+                      <?php if ($_SESSION['role'] === 'admin'): ?>
                       <td>
                         <form method="POST" onsubmit="return confirm('Are you sure you want to delete this client and all related data?');">
                           <input type="hidden" name="delete_client_id" value="<?= $row['client_id'] ?>">
                           <button type="submit" name="delete_client">Remove Client</button>
                         </form>
                       </td>
+                    <?php endif; ?>
                     </tr>
                     <?php
                   } 

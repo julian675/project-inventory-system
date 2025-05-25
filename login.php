@@ -40,11 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['message'] = "✅ Login successful!";
                 $_SESSION['alert_type'] = 'success';
 
-                if ($user['role'] === 'admin') {
-                    header("Location: admin/dashboard.php");
-                } else {
-                    header("Location: manager/dashboard.php"); 
-                }
+                header("Location: pages/dashboard.php");
+
                 exit;
             } else {
                 $_SESSION['message'] = "❌ Incorrect password!";

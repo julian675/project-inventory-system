@@ -1,4 +1,6 @@
 <?php
+session_start(); 
+
 $conn = new mysqli("localhost", "root", "", "ims_db");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -45,6 +47,12 @@ if (isset($_POST['add'])) {
 }
 
 if (isset($_POST['delete_ids'])) {
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        http_response_code(403);
+        echo "Access denied.";
+        exit;
+    }
+
     foreach ($_POST['delete_ids'] as $id) {
         $conn->query("DELETE FROM inventory WHERE id = " . (int)$id);
     }
@@ -60,6 +68,7 @@ if (isset($_POST['update_quantity'])) {
     updateStatus($conn, $id);
     exit;
 }
+
 if (isset($_POST['update_price'])) {
     $id = (int) $_POST['id'];
     $price = (float) $_POST['price'];
@@ -67,19 +76,32 @@ if (isset($_POST['update_price'])) {
     exit;
 }
 
+
 $result = $conn->query("SELECT * FROM inventory");
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $statusClass = 'status-pill status-' . strtolower($row['status']);
-        echo "<tr>
-                <td>{$row['product']}</td>
-                <td>{$row['quantity']}</td>
-                <td><span class='{$statusClass}' title='{$row['status']}'></span></td>
-                <td>
-                    <button class='plus-btn' data-id='{$row['id']}'>+</button>
-                </td>
-                <td><input type='number' step='0.01' class='price-input' data-id='{$row['id']}' value='{$row['price']}'></td>
-            </tr>";
+
+        echo "<tr>";
+
+        if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+            echo "<td><input type='checkbox' class='row-checkbox' value='{$row['id']}'></td>";
+        }
+
+        echo "<td>{$row['product']}</td>";
+        echo "<td>{$row['quantity']}</td>";
+        echo "<td><span class='{$statusClass}' title='{$row['status']}'></span></td>";
+
+        echo "<td>";
+        if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+            echo "<button class='minus-btn' data-id='{$row['id']}'>−</button>";
+        }
+        echo "<button class='plus-btn' data-id='{$row['id']}'>+</button>";
+        echo "</td>";
+
+        echo "<td><input type='number' step='0.01' class='price-input' data-id='{$row['id']}' value='{$row['price']}'></td>";
+
+        echo "</tr>";
     }
 } else {
     echo "<tr><td colspan='6'>No items in stock</td></tr>";
