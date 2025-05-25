@@ -1,5 +1,5 @@
 function loadItems() {
-  $.get("/project-inventory-system/admin/backend/inventory_backend.php", function(data) {
+  $.get("/project-inventory-system/pages/backend/inventory_backend.php", function(data) {
     $("#itemsTable").html(data);
   });
 }
@@ -9,7 +9,7 @@ $("#addProductForm").submit(function(e) {
   const form = this;
 
   $.ajax({
-    url: "/project-inventory-system/admin/backend/inventory_backend.php",
+    url: "/project-inventory-system/pages/backend/inventory_backend.php",
     method: "POST",
     data: $(form).serialize() + '&add=true',
     success: function() {
@@ -34,24 +34,24 @@ $("#deleteSelected").click(function() {
 
   if (ids.length === 0) return alert("Select at least one item.");
 
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { delete_ids: ids }, loadItems);
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { delete_ids: ids }, loadItems);
 });
 
 
 $(document).on('click', '.plus-btn', function() {
   const id = $(this).data('id');
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { update_quantity: true, id: id, delta: 1 }, loadItems);
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { update_quantity: true, id: id, delta: 1 }, loadItems);
 });
 
 $(document).on('click', '.minus-btn', function() {
   const id = $(this).data('id');
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { update_quantity: true, id: id, delta: -1 }, loadItems);
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { update_quantity: true, id: id, delta: -1 }, loadItems);
 });
 
 $(document).on('change', '.price-input', function() {
   const id = $(this).data('id');
   const price = $(this).val();
-  $.post("/project-inventory-system/admin/backend/inventory_backend.php", { update_price: true, id: id, price: price }, loadItems);
+  $.post("/project-inventory-system/pages/backend/inventory_backend.php", { update_price: true, id: id, price: price }, loadItems);
 });
 
 $("#selectAll").on("change", function() {

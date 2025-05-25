@@ -2,16 +2,10 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: admin/login.php");
-    exit;
+    die("Unauthorized access.");
 }
 
-$host = "localhost";
-$db = "ims_db";
-$user = "root";
-$pass = "";
-
-$conn = new mysqli($host, $user, $pass, $db);
+$conn = new mysqli("localhost", "root", "", "ims_db");
 if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
@@ -36,7 +30,6 @@ if ($action === 'remove') {
     $stmt->close();
     echo "OK";
     exit;
-
 }
 
 if ($action === 'promote') {
@@ -47,4 +40,3 @@ if ($action === 'promote') {
     echo "OK";
     exit;
 }
-?>

@@ -117,8 +117,19 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
 function loadItems() {
   $.get("/project-inventory-system/pages/backend/inventory_backend.php", function(data) {
     $("#itemsTable").html(data);
+
+    $("#searchBox").off("input").on("input", function () {
+      const filter = $(this).val().toLowerCase();
+      $("#itemsTable tr").filter(function () {
+        const cells = $(this).find("td");
+        const productText = cells.length === 6 ? cells.eq(1).text() : cells.eq(0).text();
+        $(this).toggle(productText.toLowerCase().includes(filter));
+      });
+    });
   });
 }
+
+
 
 $("#addProductForm").submit(function(e) {
   e.preventDefault();
