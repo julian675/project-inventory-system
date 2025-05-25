@@ -22,7 +22,8 @@ function deleteClient($conn, $client_id) {
         exit();
     } catch (Exception $e) {
         $conn->rollback();
-        echo "Failed to delete client: " . $e->getMessage();
+        $_SESSION['error_message'] = "Failed to delete client: " . $e->getMessage();
+        header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     }
 }
@@ -96,7 +97,8 @@ function placeOrder($conn, $postData) {
         exit();
     } catch (Exception $e) {
         $conn->rollback();
-        echo "Failed to place order: " . $e->getMessage();
+        $_SESSION['error_message'] = "Failed to place order: " . $e->getMessage();
+        header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     }
 }
@@ -108,4 +110,4 @@ function getInventory($conn) {
         $inventory[] = $row;
     }
     return $inventory;
-} 
+}

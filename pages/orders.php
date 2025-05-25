@@ -9,6 +9,9 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
 require_once('db_connection.php');
 require_once('backend/orders_backend.php');
 
+// Store error if redirected back
+$error_message = $_SESSION['error_message'] ?? '';
+unset($_SESSION['error_message']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['delete_client'])) {
@@ -36,8 +39,10 @@ $inventory = getInventory($conn);
 
 
     <?php if (!empty($error_message)): ?> 
-      <div id="notification"><?= htmlspecialchars($error_message) ?></div>
-    <?php endif; ?>
+    <div id="notification">
+      <?= htmlspecialchars($error_message) ?>
+    </div>
+  <?php endif; ?>
 
 
     <div class="header">

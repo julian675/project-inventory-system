@@ -126,9 +126,7 @@ $result = $conn->query($sql);
                     <div><strong><?= htmlspecialchars($row['role']) ?></strong></div>
                       <select onchange="handleAction(this.value, <?= $row['id'] ?>)" style="width: 100px; margin-top: 5px;">
                         <option value="">Actions</option>
-                        <?php if ($row['role'] !== 'admin'): ?>
                           <option value="promote">Promote to Admin</option>
-                        <?php endif; ?>
                         <option value="remove">Remove Account</option>
                       </select>
                   </div>
@@ -154,7 +152,7 @@ function handleAction(action, userId) {
     : "Are you sure you want to remove this account?";
 
   if (confirm(confirmMsg)) {
-    fetch(`/project-inventory-system/admin/backend/user_action.php?action=${action}&id=${userId}`)
+    fetch(`/project-inventory-system/pages/backend/user_action.php?action=${action}&id=${userId}`)
       .then(response => response.text())
       .then(data => {
         if (data.trim() === 'OK') {
