@@ -9,7 +9,6 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
 require_once('db_connection.php');
 require_once('backend/orders_backend.php');
 
-// Store error if redirected back
 $error_message = $_SESSION['error_message'] ?? '';
 unset($_SESSION['error_message']);
 

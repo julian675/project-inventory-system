@@ -98,7 +98,6 @@ function addProduct() {
     const first = document.querySelector('.product-row');
     const clone = first.cloneNode(true);
 
-    // Reset the values
     const select = clone.querySelector('select');
     select.selectedIndex = 0;
 
@@ -110,7 +109,6 @@ function addProduct() {
 
     clone.setAttribute('data-price', 0);
 
-    // Reattach event listeners if needed (not required unless you're using inline JS)
     document.getElementById('inventory').appendChild(clone);
 }
 
@@ -137,7 +135,6 @@ function cleanEmptyProductRows() {
     });
 }
 
-// Navigate to invoice on row click
 document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll(".clickable-row");
     rows.forEach(row => {
@@ -150,7 +147,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Auto-dismiss error notification
 document.addEventListener("DOMContentLoaded", () => {
     const notification = document.getElementById('notification');
     if (!notification) return;

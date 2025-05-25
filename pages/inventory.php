@@ -90,22 +90,23 @@ $username = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'
             <button type="button" id="deleteSelected" class="primary-btn">Delete Selected</button>
           <?php endif; ?>
         </form>
-
-        <table>
-          <thead>
-            <tr>
-              <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                <th><input type="checkbox" id="selectAll"></th>
-              <?php endif; ?>
-              <th>Product Name</th>
-              <th>Quantity</th>
-              <th>Status</th>
-              <th>Change</th>
-              <th>Unit Price</th>
-            </tr>
-          </thead>
-          <tbody id="itemsTable"></tbody>
-        </table>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                  <th><input type="checkbox" id="selectAll"></th>
+                <?php endif; ?>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>Change</th>
+                <th>Unit Price</th>
+              </tr>
+            </thead>
+            <tbody id="itemsTable"></tbody>
+          </table>
+        </div>
     </div>
   </div>
 </div>
@@ -182,12 +183,6 @@ $("#selectAll").on("change", function() {
   $(".row-checkbox").prop("checked", this.checked);
 });
 
-$("#searchBox").on("input", function() {
-  const filter = $(this).val().toLowerCase();
-  $("#itemsTable tr").filter(function() {
-    $(this).toggle($(this).find("td:eq(1)").text().toLowerCase().includes(filter));
-  });
-});
 
 $(document).ready(loadItems);
 </script>
